@@ -64,3 +64,28 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+
+#editor-canvas {
+    height: 100%;
+    width: 100%;
+    min-height: 400px; 
+    z-index: 1;
+}
+
+.leaflet-control-container {
+    z-index: 1000 !important;
+}
+
+.leaflet-pm-toolbar {
+    z-index: 1001 !important;
+}
+
+[name="draw-map-modal"] [part="content"] {
+    padding: 0 !important;
+}
+
+.leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
+}

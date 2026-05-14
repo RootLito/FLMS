@@ -33,8 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/lessees', 'admin.lessee')
             ->name('lessee.index');
 
-        Route::view('/property-status', 'admin.status')
-            ->name('status.index');
+        Route::view('/property', 'admin.property')
+            ->name('property.index');
 
         Route::view('/areas', 'admin.area')
             ->name('area.index');

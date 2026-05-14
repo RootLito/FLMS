@@ -32,17 +32,17 @@
 
                 <flux:navlist.item icon="users" :href="route('lessee.index')" :current="request()->routeIs('lessee.*')"
                     wire:navigate>
-                    Lessees
+                    Lessee Management
                 </flux:navlist.item>
 
-                <flux:navlist.item icon="check-badge" :href="route('status.index')"
-                    :current="request()->routeIs('status.*')" wire:navigate>
-                    Property Status
+                <flux:navlist.item icon="check-badge" :href="route('property.index')"
+                    :current="request()->routeIs('property.*')" wire:navigate>
+                    Property Assignment
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="map-pin" :href="route('area.index')" :current="request()->routeIs('area.*')"
                     wire:navigate>
-                    Areas
+                    Fishpond Map
                 </flux:navlist.item>
 
             </flux:navlist.group>

@@ -35,4 +35,11 @@ class Lessee extends Model
         'hec_developed' => 'decimal:2',
         'hec_undeveloped' => 'decimal:2',
     ];
+
+
+
+    public function fishpondMap()
+    {
+        return $this->hasOne(FishpondMap::class);
+    }
 }
