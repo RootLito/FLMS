@@ -42,6 +42,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/inspection-reports', 'admin.inspection')
             ->name('inspection.report');
 
+        Route::view('/inspection-reports', 'admin.inspection')
+            ->name('inspection.report');
+
+        Route::view('/inspection-reports/inspection-template', 'admin.inspection-template')
+            ->name('inspection.template');
+
         Route::view('/annual-reports', 'admin.annual')
             ->name('annual.report');
     });

@@ -155,7 +155,7 @@ new class extends Component {
             <flux:table.column>Hectares (Dev/Total)</flux:table.column>
             <flux:table.column sortable :direction="$sortField === 'date_expiration' ? $sortDirection : null"
                 wire:click="sortBy('date_expiration')">Validity</flux:table.column>
-            <flux:table.column class="w-px whitespace-nowrap">Actions</flux:table.column>
+            <flux:table.column>Actions</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>

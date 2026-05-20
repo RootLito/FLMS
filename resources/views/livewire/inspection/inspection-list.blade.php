@@ -142,9 +142,9 @@ new class extends Component {
 
         <flux:spacer />
 
-        <flux:button icon="arrow-down-tray">Export</flux:button>
-        <flux:button variant="primary" color="emerald" icon="plus" wire:click="resetForm"
-            x-on:click="$flux.modal('lessee-modal').show()">Add new lessee</flux:button>
+        <flux:button variant="primary" color="emerald" icon="document-text" :href="route('inspection.template')">
+            Generate Report
+        </flux:button>
     </div>
 
     <flux:table :paginate="$lessees">
@@ -152,9 +152,7 @@ new class extends Component {
             <flux:table.column sticky sortable :direction="$sortField === 'full_name' ? $sortDirection : null"
                 wire:click="sortBy('full_name')">Lessee / FLA</flux:table.column>
             <flux:table.column>Location</flux:table.column>
-            <flux:table.column>Hectares (Dev/Total)</flux:table.column>
-            <flux:table.column sortable :direction="$sortField === 'date_expiration' ? $sortDirection : null"
-                wire:click="sortBy('date_expiration')">Validity</flux:table.column>
+            <flux:table.column>Report Status</flux:table.column>
             <flux:table.column class="w-px whitespace-nowrap">Actions</flux:table.column>
         </flux:table.columns>
 
@@ -183,32 +181,9 @@ new class extends Component {
 
                 <!-- Column 3: Hectares -->
                 <flux:table.cell>
-                    <div class="flex items-center gap-2">
-                        <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ $lessee->hec_developed }}</span>
-                        <span class="text-zinc-400 text-xs">/</span>
-                        <span class="text-zinc-500 text-xs">{{ $lessee->hec_granted }} ha</span>
-                    </div>
+
                 </flux:table.cell>
 
-                <!-- Column 4: Expiration with Icon -->
-                <flux:table.cell>
-                    <div class="flex flex-col gap-1">
-                        <div class="flex items-center gap-1.5 text-xs text-zinc-500">
-                            <flux:icon.calendar-days variant="micro" class="size-3.5" />
-                            <span>Issued: {{ $lessee->date_issued?->format('M d, Y') }}</span>
-                        </div>
-                        <div @class([ 'flex items-center gap-1.5 text-xs font-medium'
-                            , 'text-orange-600 dark:text-orange-400'=> $lessee->date_expiration?->isFuture() &&
-                            $lessee->date_expiration?->diffInMonths(now()) < 6, 'text-red-600 dark:text-red-400'=>
-                                $lessee->date_expiration?->isPast(),
-                                'text-zinc-400' => !$lessee->date_expiration?->isPast() &&
-                                $lessee->date_expiration?->diffInMonths(now()) >= 6,
-                                ])>
-                                <flux:icon.calendar variant="micro" class="size-3.5" />
-                                <span>Expires: {{ $lessee->date_expiration?->format('M d, Y') }}</span>
-                        </div>
-                    </div>
-                </flux:table.cell>
 
                 <!-- Column 5: Always Visible Actions -->
                 <flux:table.cell>

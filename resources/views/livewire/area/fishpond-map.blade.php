@@ -81,12 +81,9 @@ new class extends Component {
                 <div class="px-4 py-2 text-sm text-zinc-500">No mapped lessees found.</div>
                 @endforelse
             </div>
-            @endif
+            @endif  
         </div>
         
-
-
-
         <div class="flex-1">
             @if($this->selectedLessee)
             <div class="animate-in fade-in slide-in-from-left-2" wire:key="details-{{ $this->selectedLessee->id }}">

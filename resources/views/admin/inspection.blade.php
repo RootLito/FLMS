@@ -7,5 +7,6 @@
             </flux:subheading>
             <flux:separator variant="subtle" />
         </div>
+        <livewire:inspection.inspection-list />
     </div>
 </x-layouts.app>
