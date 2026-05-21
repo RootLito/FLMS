@@ -8,9 +8,25 @@ new class extends Component {
 
 <div>
     <h2 class="text-xl font-bold text-gray-800 mb-2">D. Case status of the area</h2>
-    <p class="text-gray-600 mb-6">Current case status details of the area will be rendered here.</p>
-    
-    <div class="border-2 border-dashed border-gray-200 rounded-lg h-48 flex items-center justify-center text-gray-400">
-        [Part D Form Fields Placeholder]
+    <flux:separator class="my-6" />
+
+    <div class="flex flex-col gap-y-4 mb-4">
+        <div class="w-1/2">
+            <p class="text-sm font-medium text-zinc-700 mb-2">1. With pending administrative case</p>
+            <div class="flex gap-4 mb-4">
+                <flux:radio label="Yes" name="admin_case" />
+                <flux:radio label="No" name="admin_case" />
+            </div>
+            <flux:textarea placeholder="Details..." />
+        </div>
+
+        <div class="w-1/2">
+            <p class="text-sm font-medium text-zinc-700 mb-2">2. With pending judicial case</p>
+            <div class="flex gap-4 mb-4">
+                <flux:radio label="Yes" name="judicial_case" />
+                <flux:radio label="No" name="judicial_case" />
+            </div>
+            <flux:textarea placeholder="Details..." />
+        </div>
     </div>
 </div>

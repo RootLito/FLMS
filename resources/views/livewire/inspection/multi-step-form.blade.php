@@ -28,8 +28,7 @@ $previousStep = function () {
 };
 
 ?>
-<flux:card class="w-full my-6 !p-0 overflow-hidden">
-    <!-- TOP: Step Indicator Header -->
+<flux:card class="w-full h-full flex flex-col !p-0 overflow-hidden">
     <div class="p-6 border-b border-gray-200 bg-gray-50/50 dark:bg-zinc-800/50">
         <nav aria-label="Progress">
             <ol role="list"
@@ -94,7 +93,7 @@ $previousStep = function () {
     </div>
 
     <!-- MAIN MIDDLE DIV: Actual Input Content -->
-    <div class="p-8 min-h-[300px]">
+    <div class="p-8 flex-1 overflow-y-auto">
         @if ($step === 1)
         <x-inspection.part-a />
         @elseif ($step === 2)
