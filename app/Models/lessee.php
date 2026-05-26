@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lessee extends Model
 {
@@ -41,5 +42,10 @@ class Lessee extends Model
     public function fishpondMap()
     {
         return $this->hasOne(FishpondMap::class);
+    }
+
+    public function inspectionReports(): HasMany
+    {
+        return $this->hasMany(InspectionReport::class);
     }
 }

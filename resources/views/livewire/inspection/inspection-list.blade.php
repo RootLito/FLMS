@@ -51,6 +51,7 @@ new class extends Component {
             'hec_undeveloped' => 'nullable|numeric',
         ]);
 
+
         $dataToSave = collect($validated)->map(function ($value) {
             return is_string($value) ? strtoupper($value) : $value;
         })->toArray();
@@ -188,11 +189,7 @@ new class extends Component {
                 <!-- Column 5: Always Visible Actions -->
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
-                        <!-- Message Button: Default variant + Outline Icon -->
-                        <flux:tooltip content="Send Message">
-                            <flux:button icon="chat-bubble-left-right" size="sm"
-                                wire:click="openMessageModal('{{ $lessee->id }}')" />
-                        </flux:tooltip>
+
 
                         <!-- Dropdown Button: Default variant -->
                         <flux:dropdown>
