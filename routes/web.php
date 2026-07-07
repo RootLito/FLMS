@@ -50,6 +50,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::view('/annual-reports', 'admin.annual')
             ->name('annual.report');
+        Route::view('/annual-reports/annual-template', 'admin.annual-template')
+            ->name('annual.template');
     });
 
     /*

@@ -10,10 +10,8 @@ return new class extends Migration {
         Schema::create('inspection_reports', function (Blueprint $table) {
             $table->id();
 
-            // Relationship to Lessees
             $table->foreignId('lessee_id')->constrained()->onDelete('cascade');
 
-            // Header Info
             $table->string('fla_no')->nullable();
             $table->string('barangay')->nullable();
             $table->string('municipality')->nullable();
@@ -24,14 +22,12 @@ return new class extends Migration {
             $table->decimal('no_hec_developed', 10, 2)->nullable();
             $table->decimal('no_hect_undeveloped', 10, 2)->nullable();
 
-            // JSON Blobs
             $table->json('improvements')->nullable();
             $table->json('financial_values')->nullable();
             $table->json('stocking_records')->nullable();
             $table->json('harvest_records')->nullable();
             $table->json('pond_types')->nullable();
 
-            // Part D, E, F
             $table->boolean('with_pending_admin_case')->default(false);
             $table->text('admin_case_details')->nullable();
             $table->boolean('with_pending_judicial_case')->default(false);

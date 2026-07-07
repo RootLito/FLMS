@@ -135,7 +135,6 @@ new class extends Component {
 }; ?>
 
 <div class="w-full">
-    {{-- Action Bar --}}
     <div class="mb-8 w-full flex gap-2">
         <div class="w-150">
             <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search lessees..." />
@@ -160,7 +159,6 @@ new class extends Component {
         <flux:table.rows>
             @foreach ($lessees as $lessee)
             <flux:table.row :key="$lessee->id">
-                <!-- Column 1: Identity -->
                 <flux:table.cell sticky>
                     <div class="flex flex-col">
                         <span class="font-bold text-zinc-800 dark:text-white leading-tight">
@@ -172,7 +170,6 @@ new class extends Component {
                     </div>
                 </flux:table.cell>
 
-                <!-- Column 2: Location -->
                 <flux:table.cell>
                     <div class="flex flex-col">
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">{{ $lessee->municipality }}</span>
@@ -180,18 +177,13 @@ new class extends Component {
                     </div>
                 </flux:table.cell>
 
-                <!-- Column 3: Hectares -->
                 <flux:table.cell>
 
                 </flux:table.cell>
 
 
-                <!-- Column 5: Always Visible Actions -->
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
-
-
-                        <!-- Dropdown Button: Default variant -->
                         <flux:dropdown>
                             <flux:button icon="ellipsis-horizontal" size="sm" />
 

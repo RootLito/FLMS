@@ -7,6 +7,6 @@
             </flux:subheading>
             <flux:separator variant="subtle" />
         </div>
-        <livewire:lessee.lessee-list />
+        <livewire:annual-report.annual-report-list />
     </div>
 </x-layouts.app>

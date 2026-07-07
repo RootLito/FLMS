@@ -51,9 +51,11 @@ new class extends Component {
             'hec_undeveloped' => 'nullable|numeric',
         ]);
 
-        $dataToSave = collect($validated)->map(function ($value) {
-            return is_string($value) ? strtoupper($value) : $value;
-        })->toArray();
+        $dataToSave = collect($validated)
+            ->map(function ($value) {
+                return is_string($value) ? strtoupper($value) : $value;
+            })
+            ->toArray();
 
         if ($this->editingLesseeId) {
             Lessee::find($this->editingLesseeId)->update($dataToSave);
@@ -71,7 +73,7 @@ new class extends Component {
     {
         $this->editingLesseeId = $id;
         $lessee = Lessee::findOrFail($id);
-        
+
         $this->full_name = $lessee->full_name;
         $this->barangay = $lessee->barangay;
         $this->municipality = $lessee->municipality;
@@ -110,7 +112,7 @@ new class extends Component {
     public function openMessageModal($id)
     {
         $lessee = Lessee::find($id);
-        $this->messageSubject = "Notice for " . $lessee->full_name;
+        $this->messageSubject = 'Notice for ' . $lessee->full_name;
         $this->modal('message-modal')->show();
     }
 
@@ -124,8 +126,7 @@ new class extends Component {
         return [
             'lessees' => Lessee::query()
                 ->when($this->search, function ($query) {
-                    $query->where('full_name', 'like', '%' . $this->search . '%')
-                          ->orWhere('fla_no', 'like', '%' . $this->search . '%');
+                    $query->where('full_name', 'like', '%' . $this->search . '%')->orWhere('fla_no', 'like', '%' . $this->search . '%');
                 })
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10),
@@ -134,7 +135,6 @@ new class extends Component {
 }; ?>
 
 <div class="w-full">
-    {{-- Action Bar --}}
     <div class="mb-8 w-full flex gap-2">
         <div class="w-150">
             <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search lessees..." />
@@ -142,9 +142,9 @@ new class extends Component {
 
         <flux:spacer />
 
-        <flux:button icon="arrow-down-tray">Export</flux:button>
-        <flux:button variant="primary" color="emerald" icon="plus" wire:click="resetForm"
-            x-on:click="$flux.modal('lessee-modal').show()">Add new lessee</flux:button>
+        <flux:button variant="primary" color="emerald" icon="document-text" :href="route('annual.template')">
+            Generate Report
+        </flux:button>
     </div>
 
     <flux:table :paginate="$lessees">
@@ -152,92 +152,56 @@ new class extends Component {
             <flux:table.column sticky sortable :direction="$sortField === 'full_name' ? $sortDirection : null"
                 wire:click="sortBy('full_name')">Lessee / FLA</flux:table.column>
             <flux:table.column>Location</flux:table.column>
-            <flux:table.column>Hectares (Dev/Total)</flux:table.column>
-            <flux:table.column sortable :direction="$sortField === 'date_expiration' ? $sortDirection : null"
-                wire:click="sortBy('date_expiration')">Validity</flux:table.column>
-            <flux:table.column>Actions</flux:table.column>
+            <flux:table.column>Report Status</flux:table.column>
+            <flux:table.column class="w-px whitespace-nowrap">Actions</flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
             @foreach ($lessees as $lessee)
-            <flux:table.row :key="$lessee->id">
-                <!-- Column 1: Identity -->
-                <flux:table.cell sticky>
-                    <div class="flex flex-col">
-                        <span class="font-bold text-zinc-800 dark:text-white leading-tight">
-                            {{ $lessee->full_name }}
-                        </span>
-                        <span class="text-xs text-zinc-500 font-mono tracking-tighter">
-                            {{ $lessee->fla_no }}
-                        </span>
-                    </div>
-                </flux:table.cell>
-
-                <!-- Column 2: Location -->
-                <flux:table.cell>
-                    <div class="flex flex-col">
-                        <span class="text-sm text-zinc-700 dark:text-zinc-300">{{ $lessee->municipality }}</span>
-                        <span class="text-[10px] text-zinc-400 uppercase tracking-widest">{{ $lessee->province }}</span>
-                    </div>
-                </flux:table.cell>
-
-                <!-- Column 3: Hectares -->
-                <flux:table.cell>
-                    <div class="flex items-center gap-2">
-                        <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ $lessee->hec_developed }}</span>
-                        <span class="text-zinc-400 text-xs">/</span>
-                        <span class="text-zinc-500 text-xs">{{ $lessee->hec_granted }} ha</span>
-                    </div>
-                </flux:table.cell>
-
-                <!-- Column 4: Expiration with Icon -->
-                <flux:table.cell>
-                    <div class="flex flex-col gap-1">
-                        <div class="flex items-center gap-1.5 text-xs text-zinc-500">
-                            <flux:icon.calendar-days variant="micro" class="size-3.5" />
-                            <span>Issued: {{ $lessee->date_issued?->format('M d, Y') }}</span>
+                <flux:table.row :key="$lessee->id">
+                    <flux:table.cell sticky>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-zinc-800 dark:text-white leading-tight">
+                                {{ $lessee->full_name }}
+                            </span>
+                            <span class="text-xs text-zinc-500 font-mono tracking-tighter">
+                                {{ $lessee->fla_no }}
+                            </span>
                         </div>
-                        <div @class([ 'flex items-center gap-1.5 text-xs font-medium'
-                            , 'text-orange-600 dark:text-orange-400'=> $lessee->date_expiration?->isFuture() &&
-                            $lessee->date_expiration?->diffInMonths(now()) < 6, 'text-red-600 dark:text-red-400'=>
-                                $lessee->date_expiration?->isPast(),
-                                'text-zinc-400' => !$lessee->date_expiration?->isPast() &&
-                                $lessee->date_expiration?->diffInMonths(now()) >= 6,
-                                ])>
-                                <flux:icon.calendar variant="micro" class="size-3.5" />
-                                <span>Expires: {{ $lessee->date_expiration?->format('M d, Y') }}</span>
+                    </flux:table.cell>
+
+                    <flux:table.cell>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-zinc-700 dark:text-zinc-300">{{ $lessee->municipality }}</span>
+                            <span
+                                class="text-[10px] text-zinc-400 uppercase tracking-widest">{{ $lessee->province }}</span>
                         </div>
-                    </div>
-                </flux:table.cell>
+                    </flux:table.cell>
 
-                <!-- Column 5: Always Visible Actions -->
-                <flux:table.cell>
-                    <div class="flex items-center gap-2">
-                        <!-- Message Button: Default variant + Outline Icon -->
-                        <flux:tooltip content="Send Message">
-                            <flux:button icon="chat-bubble-left-right" size="sm"
-                                wire:click="openMessageModal('{{ $lessee->id }}')" />
-                        </flux:tooltip>
+                    <flux:table.cell>
+                    </flux:table.cell>
 
-                        <!-- Dropdown Button: Default variant -->
-                        <flux:dropdown>
-                            <flux:button icon="ellipsis-horizontal" size="sm" />
 
-                            <flux:menu>
-                                <flux:menu.item icon="eye">View Details</flux:menu.item>
-                                <flux:menu.item icon="pencil-square" wire:click="edit('{{ $lessee->id }}')">
-                                    Edit Lessee
-                                </flux:menu.item>
-                                <flux:menu.separator />
-                                <flux:menu.item icon="trash" variant="danger"
-                                    wire:click="confirmDelete('{{ $lessee->id }}')">
-                                    Delete Record
-                                </flux:menu.item>
-                            </flux:menu>
-                        </flux:dropdown>
-                    </div>
-                </flux:table.cell>
-            </flux:table.row>
+                    <flux:table.cell>
+                        <div class="flex items-center gap-2">
+                            <flux:dropdown>
+                                <flux:button icon="ellipsis-horizontal" size="sm" />
+
+                                <flux:menu>
+                                    <flux:menu.item icon="eye">View Details</flux:menu.item>
+                                    <flux:menu.item icon="pencil-square" wire:click="edit('{{ $lessee->id }}')">
+                                        Edit Lessee
+                                    </flux:menu.item>
+                                    <flux:menu.separator />
+                                    <flux:menu.item icon="trash" variant="danger"
+                                        wire:click="confirmDelete('{{ $lessee->id }}')">
+                                        Delete Record
+                                    </flux:menu.item>
+                                </flux:menu>
+                            </flux:dropdown>
+                        </div>
+                    </flux:table.cell>
+                </flux:table.row>
             @endforeach
         </flux:table.rows>
     </flux:table>
@@ -285,8 +249,10 @@ new class extends Component {
                 placeholder="Type your message here..." />
             <div class="flex">
                 <flux:spacer />
-                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel</flux:button>
-                <flux:button icon="paper-airplane" variant="primary" color="emerald" disabled>Send (Future Development)
+                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
+                </flux:button>
+                <flux:button icon="paper-airplane" variant="primary" color="emerald" disabled>Send (Future
+                    Development)
                 </flux:button>
             </div>
         </div>
@@ -300,15 +266,17 @@ new class extends Component {
                 <flux:text class="mt-2 text-red-500">Warning: This action is permanent.</flux:text>
             </div>
 
-            <flux:text>To confirm, please type the FLA NO: <span class="font-bold text-zinc-800">{{ $expectedFlaNo
-                    }}</span></flux:text>
+            <flux:text>To confirm, please type the FLA NO: <span
+                    class="font-bold text-zinc-800">{{ $expectedFlaNo }}</span></flux:text>
 
             <flux:input wire:model.live="flaConfirmationInput" placeholder="Enter FLA NO. to confirm" />
 
             <div class="flex">
                 <flux:spacer />
-                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel</flux:button>
-                <flux:button wire:click="delete" variant="danger" :disabled="$flaConfirmationInput !== $expectedFlaNo">
+                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
+                </flux:button>
+                <flux:button wire:click="delete" variant="danger"
+                    :disabled="$flaConfirmationInput !== $expectedFlaNo">
                     Permanently Delete
                 </flux:button>
             </div>
