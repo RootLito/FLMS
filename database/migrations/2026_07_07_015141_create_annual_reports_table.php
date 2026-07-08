@@ -33,6 +33,8 @@ return new class extends Migration {
             $table->json('marketing')->nullable();
 
             $table->text('remarks')->nullable();
+            $table->json('site_photos')->nullable();     
+            $table->text('signature_data')->nullable();
 
             $table->timestamps();
         });

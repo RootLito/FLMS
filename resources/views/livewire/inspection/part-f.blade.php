@@ -9,7 +9,6 @@ use function Livewire\Volt\{usesFileUploads};
 usesFileUploads();
 
 new class extends Component {
-    // We handle the save directly from the parent or whenever the final submit is fired
     public function saveInspection($officerName, $signatureData)
     {
         if (empty($officerName) || empty($signatureData)) {

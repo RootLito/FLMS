@@ -5,7 +5,7 @@ use App\Models\InspectionReport;
 use App\Models\Lessee;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-use Flux\Flux; // Import Flux façade for toast notifications
+use Flux\Flux; 
 
 usesFileUploads();
 
