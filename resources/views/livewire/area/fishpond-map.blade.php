@@ -138,19 +138,15 @@ new class extends Component {
         polygons: {},
 
         init() {
-            // No automatic init here to ensure the DOM is ready
-            // We follow the pattern of waiting for the component to be fully settled
             this.setupMap();
         },
 
         setupMap() {
-            // Cleanup existing instance to prevent "Map container is already initialized"
             if (this.map) {
                 this.map.remove();
                 this.map = null;
             }
 
-            // Wait for dimensions to settle (especially important if in modals or dynamic layouts)
             setTimeout(() => {
                 this.initMap();
             }, 500);
@@ -164,7 +160,6 @@ new class extends Component {
                 return;
             }
 
-            // Dimension Check (Retry Logic)
             if (container.offsetWidth === 0 || container.offsetHeight === 0) {
                 if (attempt >= 10) {
                     console.warn('Map init aborted: Container has no dimensions after 10 retries.');
@@ -174,14 +169,12 @@ new class extends Component {
                 return;
             }
 
-            // Initialize Leaflet
             this.map = L.map('map').setView([7.1907, 125.4553], 11);
 
             L.tileLayer(TILER_URL, {
                 attribution: '&copy; MapTiler'
             }).addTo(this.map);
 
-            // Add search/geocoder control
             L.Control.geocoder({
                 defaultMarkGeocode: true,
                 position: 'topright'
@@ -192,7 +185,6 @@ new class extends Component {
             })
             .addTo(this.map);
 
-            // Clear and Plot Polygons
             this.polygons = {};
             initialData.forEach(item => {
                 const poly = L.polygon(item.coordinates, {
@@ -201,40 +193,29 @@ new class extends Component {
                     weight: 2
                 }).addTo(this.map);
 
-                // --- Hover Effects ---
                 poly.on('mouseover', () => poly.setStyle({ fillOpacity: 0.7, weight: 3 }));
                 poly.on('mouseout', () => poly.setStyle({ fillOpacity: 0.4, weight: 2 }));
 
-                // --- Click Event (Updates Sidebar via Livewire) ---
                 poly.on('click', () => {
                     this.$wire.selectLessee(item.id);
                 });
 
-                // Set pointer cursor
                 if (poly._path) poly._path.style.cursor = 'pointer';
 
                 this.polygons[item.id] = poly;
             });
 
-            // Auto-zoom to fit all fishponds
             const group = L.featureGroup(Object.values(this.polygons));
             if (group.getLayers().length) {
                 this.map.fitBounds(group.getBounds(), { padding: [30, 30] });
             }
 
-            // Handle Focus Event (triggered from Search or external selection)
             window.addEventListener('focus-on-fishpond', (event) => {
                 const id = event.detail.lesseeId;
                 if (this.polygons[id]) {
                     this.map.fitBounds(this.polygons[id].getBounds(), { padding: [50, 50] });
                 }
             });
-
-            // CRITICAL: Refresh Leaflet's internal size tracking
-            // setTimeout(() => {
-            //     this.map.invalidateSize();
-            //     console.log('Fishpond display map initialized');
-            // }, 300);
         }
     }));
 </script>

@@ -1,12 +1,6 @@
-<?php
+@props(['formData'])
 
-use Livewire\Volt\Component;
-
-new class extends Component {
-    
-}; ?>
-
-<div>
+<div wire:key="step-b">
     <h2 class="text-lg font-semibold text-zinc-800"> B. Operation and Production</h2>
     <flux:separator class="my-6" />
 
@@ -17,21 +11,22 @@ new class extends Component {
         <div class="col-span-3">Value/Cost (Php)</div>
     </div>
 
-    @foreach($formData['stocking_records'] as $i => $record)
-    <div class="grid grid-cols-12 gap-3 items-start mb-4">
-        <div class="col-span-3">
-            <flux:input size="sm" wire:model="formData.stocking_records.{{$i}}.species" />
+    @foreach ($formData['stocking_records'] as $i => $record)
+        <div class="grid grid-cols-12 gap-3 items-start mb-4" wire:key="stocking-row-{{ $i }}">
+            <div class="col-span-3">
+                <flux:input size="sm" wire:model="formData.stocking_records.{{ $i }}.species" />
+            </div>
+            <div class="col-span-3">
+                <flux:input size="sm" wire:model="formData.stocking_records.{{ $i }}.source" />
+            </div>
+            <div class="col-span-3">
+                <flux:input size="sm" wire:model="formData.stocking_records.{{ $i }}.quantity" />
+            </div>
+            <div class="col-span-3">
+                <flux:input placeholder="₱ 0.00" size="sm"
+                    wire:model="formData.stocking_records.{{ $i }}.cost" />
+            </div>
         </div>
-        <div class="col-span-3">
-            <flux:input size="sm" wire:model="formData.stocking_records.{{$i}}.source" />
-        </div>
-        <div class="col-span-3">
-            <flux:input size="sm" wire:model="formData.stocking_records.{{$i}}.quantity" />
-        </div>
-        <div class="col-span-3">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.stocking_records.{{$i}}.cost" />
-        </div>
-    </div>
     @endforeach
 
     <div class="grid grid-cols-2 gap-x-3 gap-y-2 mb-4">
@@ -64,7 +59,8 @@ new class extends Component {
         </div>
         <div>
             <flux:label class="mb-1">No. of Kilos:</flux:label>
-            <flux:input placeholder="0.00 kg" size="sm" wire:model="formData.harvest_records.market_domestic_kilos" />
+            <flux:input placeholder="0.00 kg" size="sm"
+                wire:model="formData.harvest_records.market_domestic_kilos" />
         </div>
         <div>
             <flux:label class="mb-1">Export:</flux:label>
@@ -72,7 +68,8 @@ new class extends Component {
         </div>
         <div>
             <flux:label class="mb-1">No. of Kilos:</flux:label>
-            <flux:input placeholder="0.00 kg" size="sm" wire:model="formData.harvest_records.market_export_kilos" />
+            <flux:input placeholder="0.00 kg" size="sm"
+                wire:model="formData.harvest_records.market_export_kilos" />
         </div>
     </div>
 </div>

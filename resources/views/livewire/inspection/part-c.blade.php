@@ -1,10 +1,4 @@
-<?php
-
-use Livewire\Volt\Component;
-
-new class extends Component {
-    //
-}; ?>
+@props(['formData'])
 
 <div>
     <h2 class="text-xl font-bold text-gray-800 mb-2">C. Verification of Presence of Facilities</h2>

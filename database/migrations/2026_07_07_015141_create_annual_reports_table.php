@@ -13,10 +13,8 @@ return new class extends Migration {
         Schema::create('annual_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lessee_id')->constrained()->onDelete('cascade');
-
             $table->date('from')->nullable();
             $table->date('to')->nullable();
-
             $table->string('fla_no')->nullable();
             $table->string('barangay')->nullable();
             $table->string('municipality')->nullable();
