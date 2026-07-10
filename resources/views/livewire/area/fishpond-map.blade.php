@@ -14,6 +14,8 @@ new class extends Component {
         $rawUrl = env('MAPTILER_URL');
         $tileUrl = str_replace('{key}', $key, $rawUrl);
 
+        // dd($key, $rawUrl);
+
         return [
             'tileUrl' => $tileUrl,
             'results' => $this->search 

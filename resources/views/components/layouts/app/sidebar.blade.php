@@ -30,8 +30,8 @@
                     Dashboard
                 </flux:navlist.item>
 
-                <flux:navlist.item icon="users" :href="route('lessee.index')" :current="request()->routeIs('lessee.*')"
-                    wire:navigate>
+                <flux:navlist.item icon="users" :href="route('lessee.index')"
+                    :current="request()->routeIs('lessee.*')" wire:navigate>
                     Lessee Management
                 </flux:navlist.item>
 
@@ -43,6 +43,16 @@
                 <flux:navlist.item icon="map-pin" :href="route('area.index')" :current="request()->routeIs('area.*')"
                     wire:navigate>
                     Fishpond Map
+                </flux:navlist.item>
+
+                <flux:navlist.item icon="banknotes" :href="route('area.index')" :current="request()->routeIs('area.*')"
+                    wire:navigate>
+                    Lease Payments
+                </flux:navlist.item>
+
+                <flux:navlist.item icon="arrow-down-tray" :href="route('area.index')"
+                    :current="request()->routeIs('area.*')" wire:navigate>
+                    Downloadable Forms
                 </flux:navlist.item>
 
             </flux:navlist.group>
@@ -61,6 +71,16 @@
                     Annual Reports
                 </flux:navlist.item>
 
+            </flux:navlist.group>
+        </flux:navlist>
+
+
+        <flux:navlist variant="outline">
+            <flux:navlist.group heading="Testing" class="grid">
+                <flux:navlist.item icon="banknotes" :href="route('payment.index')"
+                    :current="request()->routeIs('payment.*')" wire:navigate>
+                    Test Payment
+                </flux:navlist.item>
             </flux:navlist.group>
         </flux:navlist>
 

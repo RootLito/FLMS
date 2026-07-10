@@ -2,63 +2,41 @@
 
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
-
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\TestPaymentController;
 
 Route::view('/', 'welcome')->name('home');
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard
-    |--------------------------------------------------------------------------
-    */
+    Route::view('/dashboard', 'admin.dashboard')
+        ->name('dashboard');
 
-    Route::prefix('dashboard')->group(function () {
+    Route::view('/lessees', 'admin.lessee')
+        ->name('lessee.index');
 
-        Route::view('/', 'admin.dashboard')
-            ->name('dashboard');
+    Route::view('/property', 'admin.property')
+        ->name('property.index');
 
-        Route::view('/lessees', 'admin.lessee')
-            ->name('lessee.index');
+    Route::view('/areas', 'admin.area')
+        ->name('area.index');
 
-        Route::view('/property', 'admin.property')
-            ->name('property.index');
+    Route::view('/test-payment', 'admin.test-payment')
+        ->name('payment.index');
 
-        Route::view('/areas', 'admin.area')
-            ->name('area.index');
+    Route::post('/test-payment', [TestPaymentController::class, 'send'])
+        ->name('payment.send');
 
-        Route::view('/inspection-reports', 'admin.inspection')
-            ->name('inspection.report');
+    Route::view('/inspection-reports', 'admin.inspection')
+        ->name('inspection.report');
 
-        Route::view('/inspection-reports', 'admin.inspection')
-            ->name('inspection.report');
+    Route::view('/inspection-reports/inspection-template', 'admin.inspection-template')
+        ->name('inspection.template');
 
-        Route::view('/inspection-reports/inspection-template', 'admin.inspection-template')
-            ->name('inspection.template');
+    Route::view('/annual-reports', 'admin.annual')
+        ->name('annual.report');
 
-        Route::view('/annual-reports', 'admin.annual')
-            ->name('annual.report');
-        Route::view('/annual-reports/annual-template', 'admin.annual-template')
-            ->name('annual.template');
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Settings
-    |--------------------------------------------------------------------------
-    */
+    Route::view('/annual-reports/annual-template', 'admin.annual-template')
+        ->name('annual.template');
 
     Route::redirect('settings', 'settings/profile');
 
