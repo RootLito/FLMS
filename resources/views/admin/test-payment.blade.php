@@ -55,7 +55,6 @@
 
         <flux:modal name="qr-ph-modal" class="min-w-[22rem] max-w-sm">
             <div class="space-y-6">
-                <!-- Header & Instructions -->
                 <div>
                     <flux:heading size="lg">Scan to test QR endpoint</flux:heading>
 
@@ -64,7 +63,6 @@
                     </flux:text>
                 </div>
 
-                <!-- QR Code Container -->
                 <div
                     class="flex justify-center p-6 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700">
                     <img src="https://assets.paymongo.com/images/qr_ph_placeholder.png"
@@ -72,7 +70,6 @@
                         alt="QR Ph Sandbox Test Code" class="w-48 h-48 mix-blend-multiply dark:mix-blend-normal" />
                 </div>
 
-                <!-- Footer Actions -->
                 <div class="flex gap-2">
                     <flux:spacer />
 
