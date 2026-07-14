@@ -12,16 +12,13 @@ new class extends Component {
     public $sortField = 'fla_no';
     public $sortDirection = 'asc';
 
-    // Form properties
     public $editingLesseeId = null;
     public $full_name, $barangay, $municipality, $province, $fla_no;
     public $date_issued, $date_expiration, $hec_granted, $hec_developed, $hec_undeveloped;
 
-    // Message properties
     public $messageSubject = '';
     public $messageContent = '';
 
-    // Delete properties
     public $deletingLesseeId = null;
     public $flaConfirmationInput = '';
     public $expectedFlaNo = '';
@@ -134,9 +131,8 @@ new class extends Component {
 }; ?>
 
 <div class="w-full">
-    {{-- Action Bar --}}
     <div class="mb-8 w-full flex gap-2">
-        <div class="w-150">
+        <div class="w-120">
             <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search lessees..." />
         </div>
 
@@ -161,7 +157,6 @@ new class extends Component {
         <flux:table.rows>
             @foreach ($lessees as $lessee)
             <flux:table.row :key="$lessee->id">
-                <!-- Column 1: Identity -->
                 <flux:table.cell sticky>
                     <div class="flex flex-col">
                         <span class="font-bold text-zinc-800 dark:text-white leading-tight">
@@ -173,7 +168,6 @@ new class extends Component {
                     </div>
                 </flux:table.cell>
 
-                <!-- Column 2: Location -->
                 <flux:table.cell>
                     <div class="flex flex-col">
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">{{ $lessee->municipality }}</span>
@@ -181,7 +175,6 @@ new class extends Component {
                     </div>
                 </flux:table.cell>
 
-                <!-- Column 3: Hectares -->
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
                         <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ $lessee->hec_developed }}</span>
@@ -190,7 +183,6 @@ new class extends Component {
                     </div>
                 </flux:table.cell>
 
-                <!-- Column 4: Expiration with Icon -->
                 <flux:table.cell>
                     <div class="flex flex-col gap-1">
                         <div class="flex items-center gap-1.5 text-xs text-zinc-500">
@@ -210,16 +202,13 @@ new class extends Component {
                     </div>
                 </flux:table.cell>
 
-                <!-- Column 5: Always Visible Actions -->
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
-                        <!-- Message Button: Default variant + Outline Icon -->
                         <flux:tooltip content="Send Message">
                             <flux:button icon="chat-bubble-left-right" size="sm"
                                 wire:click="openMessageModal('{{ $lessee->id }}')" />
                         </flux:tooltip>
 
-                        <!-- Dropdown Button: Default variant -->
                         <flux:dropdown>
                             <flux:button icon="ellipsis-horizontal" size="sm" />
 
@@ -242,7 +231,6 @@ new class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    {{-- Unified Add/Edit Modal --}}
     <flux:modal name="lessee-modal" class="md:w-[800px]">
         <form wire:submit="save" class="space-y-6">
             <div>
@@ -273,7 +261,6 @@ new class extends Component {
         </form>
     </flux:modal>
 
-    {{-- Message Modal --}}
     <flux:modal name="message-modal" class="md:w-[500px]">
         <div class="space-y-6">
             <div>
@@ -292,7 +279,6 @@ new class extends Component {
         </div>
     </flux:modal>
 
-    {{-- Delete Confirmation Modal --}}
     <flux:modal name="delete-confirmation" class="md:w-[450px]">
         <div class="space-y-6">
             <div>

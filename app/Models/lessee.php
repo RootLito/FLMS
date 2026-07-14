@@ -48,4 +48,9 @@ class Lessee extends Model
     {
         return $this->hasMany(InspectionReport::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

@@ -20,11 +20,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/areas', 'admin.area')
         ->name('area.index');
 
-    Route::view('/test-payment', 'admin.test-payment')
+
+    Route::view('/payments', 'admin.payment')
         ->name('payment.index');
 
+    Route::view('/dl-forms', 'admin.dl-forms')
+        ->name('dl-forms.index');
+
+
+
+
+
+    Route::view('/test-payment', 'admin.test-payment')
+        ->name('test-payment.index');
     Route::post('/test-payment', [TestPaymentController::class, 'send'])
-        ->name('payment.send');
+        ->name('test-payment.send');
+
 
     Route::view('/inspection-reports', 'admin.inspection')
         ->name('inspection.report');

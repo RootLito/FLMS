@@ -17,68 +17,59 @@
             </span>
         </a>
 
-        {{-- <span class="text-muted text-xs font-medium dark:text-gray-400">
-            Fishpond Lessee Managment System
-        </span> --}}
-
-
         <flux:navlist variant="outline">
             <flux:navlist.group heading="Main Menu" class="grid">
-
                 <flux:navlist.item icon="squares-2x2" :href="route('dashboard')"
                     :current="request()->routeIs('dashboard')" wire:navigate>
                     Dashboard
                 </flux:navlist.item>
-
                 <flux:navlist.item icon="users" :href="route('lessee.index')"
                     :current="request()->routeIs('lessee.*')" wire:navigate>
                     Lessee Management
                 </flux:navlist.item>
-
-                <flux:navlist.item icon="check-badge" :href="route('property.index')"
-                    :current="request()->routeIs('property.*')" wire:navigate>
-                    Property Assignment
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="map-pin" :href="route('area.index')" :current="request()->routeIs('area.*')"
-                    wire:navigate>
-                    Fishpond Map
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="banknotes" :href="route('area.index')" :current="request()->routeIs('area.*')"
-                    wire:navigate>
+                <flux:navlist.item icon="banknotes" :href="route('payment.index')"
+                    :current="request()->routeIs('payment.*')" wire:navigate>
                     Lease Payments
                 </flux:navlist.item>
-
-                <flux:navlist.item icon="arrow-down-tray" :href="route('area.index')"
-                    :current="request()->routeIs('area.*')" wire:navigate>
+                <flux:navlist.item icon="arrow-down-tray" :href="route('dl-forms.index')"
+                    :current="request()->routeIs('dl-forms.*')" wire:navigate>
                     Downloadable Forms
                 </flux:navlist.item>
 
             </flux:navlist.group>
         </flux:navlist>
 
+
+        <flux:navlist variant="outline">
+            <flux:navlist.group heading="Mapping" class="grid">
+                <flux:navlist.item icon="check-badge" :href="route('property.index')"
+                    :current="request()->routeIs('property.*')" wire:navigate>
+                    Property Assignment
+                </flux:navlist.item>
+                <flux:navlist.item icon="map-pin" :href="route('area.index')" :current="request()->routeIs('area.*')"
+                    wire:navigate>
+                    Fishpond Map
+                </flux:navlist.item>
+            </flux:navlist.group>
+        </flux:navlist>
+
         <flux:navlist variant="outline">
             <flux:navlist.group heading="Reports" class="grid">
-
                 <flux:navlist.item icon="clipboard-document-check" :href="route('inspection.report')"
                     :current="request()->routeIs('inspection.*')" wire:navigate>
                     Inspection Reports
                 </flux:navlist.item>
-
                 <flux:navlist.item icon="document-chart-bar" :href="route('annual.report')"
                     :current="request()->routeIs('annual.*')" wire:navigate>
                     Annual Reports
                 </flux:navlist.item>
-
             </flux:navlist.group>
         </flux:navlist>
 
-
         <flux:navlist variant="outline">
             <flux:navlist.group heading="Testing" class="grid">
-                <flux:navlist.item icon="banknotes" :href="route('payment.index')"
-                    :current="request()->routeIs('payment.*')" wire:navigate>
+                <flux:navlist.item icon="banknotes" :href="route('test-payment.index')"
+                    :current="request()->routeIs('test-payment.*')" wire:navigate>
                     Test Payment
                 </flux:navlist.item>
             </flux:navlist.group>
@@ -86,8 +77,6 @@
 
         <flux:spacer />
 
-
-        <!-- Desktop User Menu -->
         <flux:dropdown position="bottom" align="start">
             <flux:profile :name="auth()->user()->name" :initials="auth()->user()->initials()"
                 icon-trailing="chevrons-up-down" />

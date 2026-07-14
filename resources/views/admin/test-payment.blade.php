@@ -8,7 +8,7 @@
             <flux:separator variant="subtle" />
         </div>
 
-        <form action="{{ route('payment.send') }}" method="POST">
+        <form action="{{ route('test-payment.send') }}" method="POST">
             @csrf
 
             <flux:card class="max-w-md space-y-6">
