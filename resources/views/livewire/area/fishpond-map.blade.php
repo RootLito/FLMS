@@ -18,46 +18,43 @@ new class extends Component {
 
         return [
             'tileUrl' => $tileUrl,
-            'results' => $this->search 
-                ? Lessee::where('full_name', 'like', '%'.$this->search.'%')
-                    ->orWhere('fla_no', 'like', '%'.$this->search.'%')
+            'results' => $this->search
+                ? Lessee::where('full_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('fla_no', 'like', '%' . $this->search . '%')
                     ->has('fishpondMap')
                     ->limit(5)
                     ->get()
                 : [],
-            'allMapped' => Lessee::with('fishpondMap')
-                ->has('fishpondMap')
-                ->get()
-                ->map(fn($lessee) => [
+            'allMapped' => Lessee::with('fishpondMap')->has('fishpondMap')->get()->map(
+                fn($lessee) => [
                     'id' => $lessee->id,
                     'full_name' => $lessee->full_name,
                     'fla_no' => $lessee->fla_no,
                     'coordinates' => $lessee->fishpondMap->coordinates,
                     'color' => $lessee->fishpondMap->color ?? '#3b82f6',
-                ])
+                ],
+            ),
         ];
     }
 
     public function selectLessee($id)
     {
         $this->selectedLesseeId = $id;
-        $this->search = ''; 
-        
+        $this->search = '';
+
         $this->dispatch('focus-on-fishpond', lesseeId: $id);
     }
 
     public function getSelectedLesseeProperty()
     {
-        return $this->selectedLesseeId 
-            ? Lessee::with('fishpondMap')->find($this->selectedLesseeId) 
-            : null;
+        return $this->selectedLesseeId ? Lessee::with('fishpondMap')->find($this->selectedLesseeId) : null;
     }
 }; ?>
 
-<div class="flex h-[calc(100vh-100px)] w-full gap-4" x-data="fishpondMap({ 
-        initialData: @js($allMapped),
-        selectedId: @entangle('selectedLesseeId') 
-     })">
+<div class="flex h-[calc(100vh-100px)] w-full gap-4" x-data="fishpondMap({
+    initialData: @js($allMapped),
+    selectedId: @entangle('selectedLesseeId')
+})">
 
     <div
         class="w-1/3 flex flex-col gap-4 bg-white dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-y-auto">
@@ -70,58 +67,72 @@ new class extends Component {
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass"
                 placeholder="Search mapped lessees..." />
 
-            @if(!empty($search))
-            <div
-                class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg">
-                @forelse($results as $result)
-                <button wire:click="selectLessee({{ $result->id }})"
-                    class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 first:rounded-t-lg last:rounded-b-lg">
-                    <div class="text-sm font-bold">{{ $result->full_name }}</div>
-                    <div class="text-xs text-zinc-500">{{ $result->fla_no }}</div>
-                </button>
-                @empty
-                <div class="px-4 py-2 text-sm text-zinc-500">No mapped lessees found.</div>
-                @endforelse
-            </div>
-            @endif  
+            @if (!empty($search))
+                <div
+                    class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg">
+                    @forelse($results as $result)
+                        <button wire:click="selectLessee({{ $result->id }})"
+                            class="w-full text-left px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 first:rounded-t-lg last:rounded-b-lg">
+                            <div class="text-sm font-bold">{{ $result->full_name }}</div>
+                            <div class="text-xs text-zinc-500">{{ $result->fla_no }}</div>
+                        </button>
+                    @empty
+                        <div class="px-4 py-2 text-sm text-zinc-500">No mapped lessees found.</div>
+                    @endforelse
+                </div>
+            @endif
         </div>
-        
+
         <div class="flex-1">
-            @if($this->selectedLessee)
-            <div class="animate-in fade-in slide-in-from-left-2" wire:key="details-{{ $this->selectedLessee->id }}">
-                <flux:heading size="lg">{{ $this->selectedLessee->full_name }}</flux:heading>
-                <flux:text class="mb-4">{{ $this->selectedLessee->fla_no }}</flux:text>
+            @if ($this->selectedLessee)
+                <div class="animate-in fade-in slide-in-from-left-2" wire:key="details-{{ $this->selectedLessee->id }}">
+                    <flux:heading size="lg">{{ $this->selectedLessee->full_name }}</flux:heading>
+                    <flux:text class="mb-4">{{ $this->selectedLessee->fla_no }}</flux:text>
 
-                <div class="space-y-3">
-                    <flux:card variant="subtle">
-                        <div class="text-xs text-zinc-500 uppercase">Location</div>
-                        <div class="font-medium">{{ $this->selectedLessee->barangay }}, {{
-                            $this->selectedLessee->municipality }}</div>
-                        <div class="text-xs text-zinc-400">{{ $this->selectedLessee->province }}</div>
-                    </flux:card>
-
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="space-y-3">
                         <flux:card variant="subtle">
-                            <div class="text-xs text-zinc-500 font-medium">Hectares</div>
-                            <div class="text-xl font-bold">{{ $this->selectedLessee->hec_granted }}</div>
+                            <div class="text-xs text-zinc-500 uppercase">Location</div>
+                            <div class="font-medium">{{ $this->selectedLessee->barangay }},
+                                {{ $this->selectedLessee->municipality }}</div>
+                            <div class="text-xs text-zinc-400">{{ $this->selectedLessee->province }}</div>
                         </flux:card>
-                        <flux:card variant="subtle">
-                            <div class="text-xs text-zinc-500 font-medium">Status</div>
-                            <div class="text-sm font-bold text-emerald-600">Active</div>
-                        </flux:card>
-                    </div>
 
-                    <div class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                        <flux:icon.calendar variant="micro" />
-                        <span>Expires: {{ $this->selectedLessee->date_expiration?->format('M d, Y') ?? 'N/A' }}</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <flux:card variant="subtle">
+                                <div class="text-xs text-zinc-500 font-medium">Hectares</div>
+                                <div class="text-xl font-bold">{{ $this->selectedLessee->hec_granted }}</div>
+                            </flux:card>
+                            <flux:card variant="subtle">
+                                <div class="text-xs text-zinc-500 font-medium">Status</div>
+                                <div class="text-sm font-bold text-emerald-600">Active</div>
+                            </flux:card>
+                        </div>
+
+                        <div class="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                            <flux:icon.calendar variant="micro" />
+                            <span>Expires:
+                                {{ $this->selectedLessee->date_expiration?->format('M d, Y') ?? 'N/A' }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
             @else
-            <div class="h-full flex flex-col items-center justify-center text-zinc-400 text-center p-8">
-                <flux:icon.map class="size-12 mb-2 opacity-20" />
-                <p>Select a fishpond on the map or search to view details.</p>
-            </div>
+                <div class="h-full flex flex-col items-center justify-center p-8 text-center">
+                    <div class="mx-auto flex max-w-xs flex-col items-center justify-center">
+                        <!-- Modern badge wrapper for the icon -->
+                        <div class="rounded-full bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                            <flux:icon.map class="size-8 text-zinc-400 dark:text-zinc-500" variant="outline" />
+                        </div>
+
+                        <h3 class="mt-4 text-sm font-semibold text-zinc-900 dark:text-white">
+                            No fishpond selected
+                        </h3>
+
+                        <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                            Select a fishpond on the map or use the search bar above to view its detailed tracking
+                            information.
+                        </p>
+                    </div>
+                </div>
             @endif
         </div>
     </div>
@@ -132,93 +143,105 @@ new class extends Component {
 </div>
 
 @script
-<script>
-    const TILER_URL = @js($tileUrl);
+    <script>
+        const TILER_URL = @js($tileUrl);
 
-    Alpine.data('fishpondMap', ({ initialData }) => ({
-        map: null,
-        polygons: {},
+        Alpine.data('fishpondMap', ({
+            initialData
+        }) => ({
+            map: null,
+            polygons: {},
 
-        init() {
-            this.setupMap();
-        },
+            init() {
+                this.setupMap();
+            },
 
-        setupMap() {
-            if (this.map) {
-                this.map.remove();
-                this.map = null;
-            }
+            setupMap() {
+                if (this.map) {
+                    this.map.remove();
+                    this.map = null;
+                }
 
-            setTimeout(() => {
-                this.initMap();
-            }, 500);
-        },
+                setTimeout(() => {
+                    this.initMap();
+                }, 500);
+            },
 
-        initMap(attempt = 0) {
-            const container = document.getElementById('map');
-            
-            if (!container) {
-                console.error('Map container #map not found');
-                return;
-            }
+            initMap(attempt = 0) {
+                const container = document.getElementById('map');
 
-            if (container.offsetWidth === 0 || container.offsetHeight === 0) {
-                if (attempt >= 10) {
-                    console.warn('Map init aborted: Container has no dimensions after 10 retries.');
+                if (!container) {
+                    console.error('Map container #map not found');
                     return;
                 }
-                setTimeout(() => this.initMap(attempt + 1), 200);
-                return;
-            }
 
-            this.map = L.map('map').setView([7.1907, 125.4553], 11);
+                if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+                    if (attempt >= 10) {
+                        console.warn('Map init aborted: Container has no dimensions after 10 retries.');
+                        return;
+                    }
+                    setTimeout(() => this.initMap(attempt + 1), 200);
+                    return;
+                }
 
-            L.tileLayer(TILER_URL, {
-                attribution: '&copy; MapTiler'
-            }).addTo(this.map);
+                this.map = L.map('map').setView([7.1907, 125.4553], 11);
 
-            L.Control.geocoder({
-                defaultMarkGeocode: true,
-                position: 'topright'
-            })
-            .on('markgeocode', (e) => {
-                const center = e.geocode.center || e.geocode.bbox.getCenter();
-                this.map.setView(center, 14);
-            })
-            .addTo(this.map);
-
-            this.polygons = {};
-            initialData.forEach(item => {
-                const poly = L.polygon(item.coordinates, {
-                    color: item.color,
-                    fillOpacity: 0.4,
-                    weight: 2
+                L.tileLayer(TILER_URL, {
+                    attribution: '&copy; MapTiler'
                 }).addTo(this.map);
 
-                poly.on('mouseover', () => poly.setStyle({ fillOpacity: 0.7, weight: 3 }));
-                poly.on('mouseout', () => poly.setStyle({ fillOpacity: 0.4, weight: 2 }));
+                L.Control.geocoder({
+                        defaultMarkGeocode: true,
+                        position: 'topright'
+                    })
+                    .on('markgeocode', (e) => {
+                        const center = e.geocode.center || e.geocode.bbox.getCenter();
+                        this.map.setView(center, 14);
+                    })
+                    .addTo(this.map);
 
-                poly.on('click', () => {
-                    this.$wire.selectLessee(item.id);
+                this.polygons = {};
+                initialData.forEach(item => {
+                    const poly = L.polygon(item.coordinates, {
+                        color: item.color,
+                        fillOpacity: 0.4,
+                        weight: 2
+                    }).addTo(this.map);
+
+                    poly.on('mouseover', () => poly.setStyle({
+                        fillOpacity: 0.7,
+                        weight: 3
+                    }));
+                    poly.on('mouseout', () => poly.setStyle({
+                        fillOpacity: 0.4,
+                        weight: 2
+                    }));
+
+                    poly.on('click', () => {
+                        this.$wire.selectLessee(item.id);
+                    });
+
+                    if (poly._path) poly._path.style.cursor = 'pointer';
+
+                    this.polygons[item.id] = poly;
                 });
 
-                if (poly._path) poly._path.style.cursor = 'pointer';
-
-                this.polygons[item.id] = poly;
-            });
-
-            const group = L.featureGroup(Object.values(this.polygons));
-            if (group.getLayers().length) {
-                this.map.fitBounds(group.getBounds(), { padding: [30, 30] });
-            }
-
-            window.addEventListener('focus-on-fishpond', (event) => {
-                const id = event.detail.lesseeId;
-                if (this.polygons[id]) {
-                    this.map.fitBounds(this.polygons[id].getBounds(), { padding: [50, 50] });
+                const group = L.featureGroup(Object.values(this.polygons));
+                if (group.getLayers().length) {
+                    this.map.fitBounds(group.getBounds(), {
+                        padding: [30, 30]
+                    });
                 }
-            });
-        }
-    }));
-</script>
+
+                window.addEventListener('focus-on-fishpond', (event) => {
+                    const id = event.detail.lesseeId;
+                    if (this.polygons[id]) {
+                        this.map.fitBounds(this.polygons[id].getBounds(), {
+                            padding: [50, 50]
+                        });
+                    }
+                });
+            }
+        }));
+    </script>
 @endscript

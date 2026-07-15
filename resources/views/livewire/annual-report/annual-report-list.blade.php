@@ -66,7 +66,7 @@ new class extends Component {
 
 <div class="w-full">
     <div class="mb-8 w-full flex gap-2">
-        <div class="w-150">
+        <div class="w-120">
             <flux:input wire:model.live="search" icon="magnifying-glass"
                 placeholder="Search reports by FLA or Lessee..." />
         </div>
@@ -90,7 +90,7 @@ new class extends Component {
         </flux:table.columns>
 
         <flux:table.rows>
-            @foreach ($reports as $report)
+            @forelse ($reports as $report)
                 <flux:table.row :key="$report->id">
                     <flux:table.cell sticky>
                         <div class="flex flex-col">
@@ -140,7 +140,24 @@ new class extends Component {
                         </div>
                     </flux:table.cell>
                 </flux:table.row>
-            @endforeach
+            @empty
+                <flux:table.row class="[border-bottom:none] [&_td]:border-b-0">
+                    <flux:table.cell colspan="5" class="py-16 text-center">
+                        <div class="mx-auto flex max-w-sm flex-col items-center justify-center">
+                            <div class="rounded-full bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                                <flux:icon name="document-text" class="size-8 text-zinc-400 dark:text-zinc-500"
+                                    variant="outline" />
+                            </div>
+                            <h3 class="mt-4 text-sm font-semibold text-zinc-900 dark:text-white">
+                                No submissions found
+                            </h3>
+                            <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                                There are currently no records available for this coverage period.
+                            </p>
+                        </div>
+                    </flux:table.cell>
+                </flux:table.row>
+            @endforelse
         </flux:table.rows>
     </flux:table>
 

@@ -204,7 +204,7 @@ new class extends Component {
         </flux:table.columns>
 
         <flux:table.rows>
-            @foreach ($payments as $payment)
+            @forelse ($payments as $payment)
                 <flux:table.row :key="$payment->id">
                     <flux:table.cell sticky>
                         <span class="font-mono font-bold text-zinc-900 dark:text-zinc-100">
@@ -275,7 +275,24 @@ new class extends Component {
                         </div>
                     </flux:table.cell>
                 </flux:table.row>
-            @endforeach
+            @empty
+                <flux:table.row class="[border-bottom:none] [&_td]:border-b-0">
+                    <flux:table.cell colspan="7" class="py-16 text-center">
+                        <div class="mx-auto flex max-w-sm flex-col items-center justify-center">
+                            <div class="rounded-full bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                                <flux:icon name="credit-card" class="size-8 text-zinc-400 dark:text-zinc-500"
+                                    variant="outline" />
+                            </div>
+                            <h3 class="mt-4 text-sm font-semibold text-zinc-900 dark:text-white">
+                                No payments found
+                            </h3>
+                            <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                                No payment transactions or receipts match your current filters.
+                            </p>
+                        </div>
+                    </flux:table.cell>
+                </flux:table.row>
+            @endforelse
         </flux:table.rows>
     </flux:table>
 
@@ -359,7 +376,8 @@ new class extends Component {
 
             <div class="flex">
                 <flux:spacer />
-                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel</flux:button>
+                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
+                </flux:button>
                 <flux:button type="submit" variant="primary" color="emerald">Commit Record</flux:button>
             </div>
         </form>

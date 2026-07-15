@@ -59,7 +59,7 @@ new class extends Component {
         @php $selected = $this->selectedLessee; @endphp
 
         <flux:modal.trigger name="draw-map-modal">
-            <flux:button variant="primary" icon="pencil-square" :disabled="!$selectedLesseeId">
+            <flux:button variant="primary" color="emerald" icon="pencil-square" :disabled="!$selectedLesseeId">
                 {{ $selected?->fishpondMap ? 'Update Area' : 'Draw Area' }}
             </flux:button>
         </flux:modal.trigger>
@@ -68,7 +68,7 @@ new class extends Component {
     <div class="w-full flex-1 flex gap-4 min-h-0">
         <div class="w-150 rounded-xl overflow-y-auto bg-white dark:bg-neutral-900">
             <div class="space-y-2">
-                @foreach ($lessees as $lessee)
+                @forelse ($lessees as $lessee)
                     <div wire:click="selectLessee({{ $lessee->id }})" @class([
                         'p-4 rounded-xl cursor-pointer transition-all duration-200 border-2 relative overflow-hidden',
                         'bg-blue-50/50 border-blue-500 ring-1 ring-blue-200 dark:bg-blue-900/10 dark:ring-blue-800' =>
@@ -136,9 +136,26 @@ new class extends Component {
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div
+                        class="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-neutral-100 dark:border-neutral-800 rounded-xl">
+                        <div class="rounded-full bg-neutral-50 p-4 dark:bg-neutral-800/50">
+                            <flux:icon name="users" class="size-8 text-neutral-400 dark:text-neutral-500"
+                                variant="outline" />
+                        </div>
+                        <h3 class="mt-4 text-sm font-semibold text-neutral-900 dark:text-white">
+                            No lessees available
+                        </h3>
+                        <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400 max-w-[240px] mx-auto mb-4">
+                            There are no registered lessees matching this selection.
+                        </p>
+                    </div>
+                @endforelse
             </div>
-            <div class="p-4">{{ $lessees->links() }}</div>
+
+            @if ($lessees->isNotEmpty())
+                <div class="p-4">{{ $lessees->links() }}</div>
+            @endif
         </div>
 
         <div
@@ -176,7 +193,7 @@ new class extends Component {
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
 
-                <flux:button variant="primary" x-on:click="save">Save Changes</flux:button>
+                <flux:button variant="primary" color="emerald" x-on:click="save">Save Changes</flux:button>
             </div>
         </div>
     </flux:modal>
