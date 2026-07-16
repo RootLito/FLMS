@@ -268,6 +268,7 @@ $confirmSubmit = function () {
     ];
 
     Flux::toast(variant: 'success', heading: 'Submitted', text: 'Annual Report saved successfully!');
+    $this->modal('confirm-save-modal')->close();
     $this->step = 1;
 };
 ?>
@@ -382,11 +383,13 @@ $confirmSubmit = function () {
 
             <div class="flex space-x-2 justify-end">
                 <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
+                    <flux:button variant="ghost" wire:loading.attr="disabled" wire:target="confirmSubmit">
+                        Cancel
+                    </flux:button>
                 </flux:modal.close>
 
-                <flux:button variant="primary" color="emerald"
-                    x-on:click="Flux.modal('confirm-save-modal').close(); $wire.confirmSubmit()">
+                <flux:button variant="primary" color="emerald" wire:click="confirmSubmit" wire:loading.attr="disabled"
+                    wire:target="confirmSubmit">
                     Confirm & Save
                 </flux:button>
             </div>

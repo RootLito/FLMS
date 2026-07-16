@@ -85,7 +85,7 @@ new class extends Component {
             <flux:table.column>Coverage Period</flux:table.column>
             <flux:table.column>Location</flux:table.column>
             <flux:table.column sortable :direction="$sortField === 'created_at' ? $sortDirection : null"
-                wire:click="sortBy('created_at')">Submitted Date</flux:table.column>
+                wire:click="sortBy('created_at')">Date Generate</flux:table.column>
             <flux:table.column class="w-px whitespace-nowrap">Actions</flux:table.column>
         </flux:table.columns>
 
@@ -119,7 +119,7 @@ new class extends Component {
 
                     <flux:table.cell>
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                            {{ $report->created_at?->format('M d, Y') }}
+                            {{ $report->created_at?->format('M d, Y h:i:s A') }}
                         </span>
                     </flux:table.cell>
 

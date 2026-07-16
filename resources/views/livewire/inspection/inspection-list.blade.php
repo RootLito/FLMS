@@ -210,7 +210,7 @@ new class extends Component {
         <flux:table.columns>
             <flux:table.column sticky sortable :direction="$sortField === 'fla_no' ? $sortDirection : null"
                 wire:click="sortBy('fla_no')">FLA / Lessee</flux:table.column>
-            <flux:table.column>Coverage Period</flux:table.column>
+            <flux:table.column>Date Generated</flux:table.column>
             <flux:table.column>Location</flux:table.column>
             <flux:table.column>Remarks</flux:table.column>
             <flux:table.column class="w-px whitespace-nowrap">Actions</flux:table.column>
@@ -232,11 +232,7 @@ new class extends Component {
 
                     <flux:table.cell>
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                            @if ($report->from && $report->to)
-                                {{ $report->from->format('M Y') }} - {{ $report->to->format('M Y') }}
-                            @else
-                                N/A
-                            @endif
+                            {{ $report->created_at?->format('M d, Y h:i:s A') }}
                         </span>
                     </flux:table.cell>
 

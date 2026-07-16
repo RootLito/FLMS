@@ -1,6 +1,6 @@
 <?php
 
-use function Livewire\Volt\{state, computed, usesFileUploads};
+use function Livewire\Volt\{state, computed, usesFileUploads, updated};
 use App\Models\InspectionReport;
 use App\Models\Lessee;
 use Illuminate\Support\Str;
@@ -11,14 +11,15 @@ usesFileUploads();
 
 state([
     'step' => 1,
-    'totalSteps' => 6,
+    'totalSteps' => 7,
     'stepsInfo' => [
-        1 => ['letter' => 'a', 'title' => 'Kind and Extent of Improvements'],
-        2 => ['letter' => 'b', 'title' => 'Operation and Production'],
-        3 => ['letter' => 'c', 'title' => 'Verification of Presence '],
-        4 => ['letter' => 'd', 'title' => 'Case status of the area'],
-        5 => ['letter' => 'e', 'title' => 'Remarks and Recommendation/s'],
-        6 => ['letter' => 'f', 'title' => 'Signature and Photo'],
+        1 => ['letter' => 'i', 'title' => 'Initial Details'],
+        2 => ['letter' => 'a', 'title' => 'Kind and Extent of Improvements'],
+        3 => ['letter' => 'b', 'title' => 'Operation and Production'],
+        4 => ['letter' => 'c', 'title' => 'Verification of Presence '],
+        5 => ['letter' => 'd', 'title' => 'Case status of the area'],
+        6 => ['letter' => 'e', 'title' => 'Remarks and Recommendation/s'],
+        7 => ['letter' => 'f', 'title' => 'Signature and Photo'],
     ],
     'formData' => [
         'lessee_id' => '',
@@ -135,19 +136,29 @@ state([
 ]);
 
 $updatedFormDataLesseeId = function ($value) {
-    if ($value) {
-        $lessee = Lessee::find($value);
-        if ($lessee) {
-            $this->formData['fla_no'] = $lessee->fla_no ?? '';
-            $this->formData['barangay'] = $lessee->barangay ?? '';
-            $this->formData['municipality'] = $lessee->municipality ?? '';
-            $this->formData['province'] = $lessee->province ?? '';
-            $this->formData['date_issued'] = $lessee->date_issued?->format('Y-m-d') ?? '';
-            $this->formData['date_expire'] = $lessee->date_expiration?->format('Y-m-d') ?? '';
-            $this->formData['no_hec_granted'] = $lessee->hec_granted ?? '';
-            $this->formData['no_hec_developed'] = $lessee->hec_developed ?? '';
-            $this->formData['no_hect_undeveloped'] = $lessee->hec_undeveloped ?? '';
-        }
+    if (empty($value)) {
+        $this->formData['fla_no'] = '';
+        $this->formData['barangay'] = '';
+        $this->formData['municipality'] = '';
+        $this->formData['province'] = '';
+        $this->formData['date_issued'] = '';
+        $this->formData['date_expire'] = '';
+        $this->formData['no_hec_granted'] = '';
+        $this->formData['no_hec_developed'] = '';
+        $this->formData['no_hect_undeveloped'] = '';
+        return;
+    }
+
+    if ($lessee = Lessee::find($value)) {
+        $this->formData['fla_no'] = $lessee->fla_no ?? '';
+        $this->formData['barangay'] = $lessee->barangay ?? '';
+        $this->formData['municipality'] = $lessee->municipality ?? '';
+        $this->formData['province'] = $lessee->province ?? '';
+        $this->formData['date_issued'] = $lessee->date_issued?->format('Y-m-d') ?? '';
+        $this->formData['date_expire'] = $lessee->date_expiration?->format('Y-m-d') ?? '';
+        $this->formData['no_hec_granted'] = $lessee->hec_granted ?? '';
+        $this->formData['no_hec_developed'] = $lessee->hec_developed ?? '';
+        $this->formData['no_hect_undeveloped'] = $lessee->hec_undeveloped ?? '';
     }
 };
 
@@ -238,8 +249,6 @@ $submit = function () {
             'certified' => config('sign-pad.certify_documents', false),
         ]);
     }
-
-    Flux::toast(variant: 'success', heading: 'Report Stored.', text: 'Unified Inspection Report stored successfully for the lessee!');
 
     $this->reset('step');
     $this->formData = [
@@ -349,6 +358,10 @@ $submit = function () {
         'signature_data' => '',
         'site_photos' => [],
     ];
+
+    Flux::toast(variant: 'success', heading: 'Submitted', text: 'Annual Report saved successfully!');
+    $this->modal('confirm-submit')->close();
+    $this->step = 1;
 };
 
 ?>
@@ -407,26 +420,30 @@ $submit = function () {
     <div class="p-8 flex-1 overflow-y-auto">
         @if ($step === 1)
             <div wire:key="step-view-1">
-                <x-inspection.part-a :formData="$formData" :lessees="$this->lessees" />
+                <x-inspection.initial :formData="$formData" :lessees="$this->lessees" />
             </div>
         @elseif ($step === 2)
             <div wire:key="step-view-2">
-                <x-inspection.part-b :formData="$formData" />
+                <x-inspection.part-a :formData="$formData" />
             </div>
         @elseif ($step === 3)
             <div wire:key="step-view-3">
-                <x-inspection.part-c :formData="$formData" />
+                <x-inspection.part-b :formData="$formData" />
             </div>
         @elseif ($step === 4)
             <div wire:key="step-view-4">
-                <x-inspection.part-d :formData="$formData" />
+                <x-inspection.part-c :formData="$formData" />
             </div>
         @elseif ($step === 5)
             <div wire:key="step-view-5">
-                <x-inspection.part-e :formData="$formData" />
+                <x-inspection.part-d :formData="$formData" />
             </div>
         @elseif ($step === 6)
             <div wire:key="step-view-6">
+                <x-inspection.part-e :formData="$formData" />
+            </div>
+        @elseif ($step === 7)
+            <div wire:key="step-view-7">
                 <x-inspection.part-f :formData="$formData" />
             </div>
         @endif
@@ -463,11 +480,13 @@ $submit = function () {
 
             <div class="flex space-x-2 justify-end">
                 <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
+                    <flux:button variant="ghost" wire:loading.attr="disabled" wire:target="submit">
+                        Cancel
+                    </flux:button>
                 </flux:modal.close>
 
-                <flux:button variant="primary" color="emerald"
-                    x-on:click="Flux.modal('confirm-submit').close(); $wire.submit()">
+                <flux:button variant="primary" color="emerald" wire:click="submit" wire:loading.attr="disabled"
+                    wire:target="submit">
                     Confirm & Submit
                 </flux:button>
             </div>

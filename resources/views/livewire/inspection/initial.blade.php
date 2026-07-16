@@ -11,10 +11,10 @@
 
         <div class="flex flex-col w-full">
             <div class="flex flex-col w-full mb-4">
-                <label for="lessee" class="mb-2">Lessee</label>
+                <label for="lessee" class="text-sm font-medium text-zinc-700 mb-2">Name of Lessee/Applicant</label>
 
                 <flux:dropdown>
-                    <flux:button class="w-full" align="start" >
+                    <flux:button class="w-full" align="start">
                         {{ $lessees->firstWhere('id', $formData['lessee_id'])->full_name ?? 'Select Lessee' }}
                     </flux:button>
 
@@ -29,67 +29,48 @@
                 </flux:dropdown>
             </div>
 
-
             <div class="w-full mb-4">
-                <flux:input label="FLA No." wire:model="formData.fla_no" disabled class="bg-zinc-50/50" />
+                <flux:input label="FLA/ASC/Fp. A. No." wire:model="formData.fla_no" disabled class="bg-zinc-50/50" />
             </div>
 
             <div class="w-full mb-4">
-                <flux:input label="Location / Fishpond Address" wire:model="formData.location" disabled
-                    class="bg-zinc-50/50" />
+                @php
+                    $addressParts = array_filter([
+                        $formData['barangay'] ?? '',
+                        $formData['municipality'] ?? '',
+                        $formData['province'] ?? '',
+                    ]);
+                    $computedLocation = implode(', ', $addressParts);
+                @endphp
+                <flux:input label="Address" value="{{ $computedLocation }}" disabled
+                    placeholder="Address will auto-populate" class="bg-zinc-50/50" />
             </div>
 
-            <div class="w-full mb-4">
-                <flux:input type="date" label="Date Issued" wire:model="formData.date_issued" disabled
-                    class="bg-zinc-50/50" />
-            </div>
-
-            <div class="w-full mb-4">
-                <flux:input type="date" label="Expiry Date" wire:model="formData.expiry_date" disabled
-                    class="bg-zinc-50/50" />
-            </div>
-
-            <div class="w-full mb-4">
-                <flux:input label="Area Granted (has.)" wire:model="formData.area_granted" disabled
-                    class="bg-zinc-50/50" />
+            <div class="w-full flex gap-4">
+                <div class="w-full mb-4">
+                    <flux:input type="date" label="Date Issued" wire:model="formData.date_issued" disabled
+                        class="bg-zinc-50/50" />
+                </div>
+                <div class="w-full mb-4">
+                    <flux:input type="date" label="Date of Expiration" wire:model="formData.date_expire" disabled
+                        class="bg-zinc-50/50" />
+                </div>
             </div>
         </div>
 
         <div class="flex flex-col w-full">
-            <div class="flex gap-4 w-full mb-4">
-                <div class="flex-1">
-                    <flux:input type="date" label="Report Period From" wire:model="formData.report_year_from" />
-                </div>
-                <div class="flex-1">
-                    <flux:input type="date" label="Report Period To" wire:model="formData.report_year_to" />
-                </div>
-            </div>
-
             <div class="w-full mb-4">
-                <flux:input label="Total Area Developed (has.)" wire:model="formData.area_developed" disabled
-                    class="bg-zinc-50/50 font-semibold" />
-            </div>
-
-            <div class="w-full mb-4">
-                <flux:input label="Area Undeveloped (has.)" wire:model="formData.area_undeveloped" disabled
+                <flux:input label="No. of hectares granted" wire:model="formData.no_hec_granted" disabled
                     class="bg-zinc-50/50" />
             </div>
-
-            <div class="flex flex-col w-full">
-                <div class="w-full mb-4">
-                    <flux:input label="a. Nursery (has.)" wire:model="formData.pond_breakdown.nursery"
-                        placeholder="0.00" />
-                </div>
-                <div class="w-full mb-4">
-                    <flux:input label="b. Transition (has.)" wire:model="formData.pond_breakdown.transition"
-                        placeholder="0.00" />
-                </div>
-                <div class="w-full mb-4">
-                    <flux:input label="c. Rearing (has.)" wire:model="formData.pond_breakdown.rearing"
-                        placeholder="0.00" />
-                </div>
+            <div class="w-full mb-4">
+                <flux:input label="No. of hectares developed" wire:model="formData.no_hec_developed" disabled
+                    class="bg-zinc-50/50" />
+            </div>
+            <div class="w-full mb-4">
+                <flux:input label="No. of hectares undeveloped" wire:model="formData.no_hect_undeveloped" disabled
+                    class="bg-zinc-50/50" />
             </div>
         </div>
-
     </div>
 </div>
