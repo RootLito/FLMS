@@ -209,7 +209,7 @@ new class extends Component {
     <flux:table :paginate="$reports">
         <flux:table.columns>
             <flux:table.column sticky sortable :direction="$sortField === 'fla_no' ? $sortDirection : null"
-                wire:click="sortBy('fla_no')">FLA / Lessee</flux:table.column>
+                wire:click="sortBy('fla_no')">Lessee / FLA</flux:table.column>
             <flux:table.column>Date Generated</flux:table.column>
             <flux:table.column>Location</flux:table.column>
             <flux:table.column>Remarks</flux:table.column>
@@ -221,11 +221,11 @@ new class extends Component {
                 <flux:table.row :key="$report->id">
                     <flux:table.cell sticky>
                         <div class="flex flex-col">
-                            <span class="font-mono text-sm text-zinc-800 dark:text-white leading-tight font-bold">
-                                {{ $report->fla_no }}
-                            </span>
-                            <span class="text-xs text-zinc-500">
+                            <span class="font-bold text-zinc-800 dark:text-white leading-tight">
                                 {{ $report->lessee->full_name ?? 'N/A' }}
+                            </span>
+                            <span class="text-xs text-zinc-500 font-mono tracking-tighter">
+                                {{ $report->fla_no }}
                             </span>
                         </div>
                     </flux:table.cell>

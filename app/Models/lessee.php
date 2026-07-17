@@ -15,6 +15,8 @@ class Lessee extends Model
      */
     protected $fillable = [
         'full_name',
+        'email',          
+        'contact_number',
         'barangay',
         'municipality',
         'province',

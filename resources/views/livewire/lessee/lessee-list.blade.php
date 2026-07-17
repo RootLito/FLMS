@@ -4,6 +4,8 @@ use Livewire\Volt\Component;
 use Livewire\WithPagination;
 use App\Models\Lessee;
 use Flux\Flux;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\LesseeNotificationMail;
 
 new class extends Component {
     use WithPagination;
@@ -13,11 +15,13 @@ new class extends Component {
     public $sortDirection = 'asc';
 
     public $editingLesseeId = null;
-    public $full_name, $barangay, $municipality, $province, $fla_no;
+    public $full_name, $email, $contact_number, $barangay, $municipality, $province, $fla_no;
     public $date_issued, $date_expiration, $hec_granted, $hec_developed, $hec_undeveloped;
 
+    public $messageEmail = '';
     public $messageSubject = '';
     public $messageContent = '';
+    public $noticeType = 'Notice for Payment';
 
     public $deletingLesseeId = null;
     public $flaConfirmationInput = '';
@@ -37,6 +41,8 @@ new class extends Component {
     {
         $validated = $this->validate([
             'full_name' => 'required|string',
+            'email' => 'nullable|email|max:255',
+            'contact_number' => 'nullable|string|max:50',
             'fla_no' => 'required|unique:lessees,fla_no,' . $this->editingLesseeId,
             'barangay' => 'nullable|string',
             'municipality' => 'nullable|string',
@@ -49,7 +55,10 @@ new class extends Component {
         ]);
 
         $dataToSave = collect($validated)
-            ->map(function ($value) {
+            ->map(function ($value, $key) {
+                if ($key === 'email') {
+                    return is_string($value) ? strtolower($value) : $value;
+                }
                 return is_string($value) ? strtoupper($value) : $value;
             })
             ->toArray();
@@ -72,10 +81,11 @@ new class extends Component {
         $lessee = Lessee::findOrFail($id);
 
         $this->full_name = $lessee->full_name;
+        $this->email = $lessee->email;
+        $this->contact_number = $lessee->contact_number;
         $this->barangay = $lessee->barangay;
         $this->municipality = $lessee->municipality;
         $this->province = $lessee->province;
-        $this->fla_no = $lessee->fla_no;
         $this->date_issued = $lessee->date_issued?->format('Y-m-d');
         $this->date_expiration = $lessee->date_expiration?->format('Y-m-d');
         $this->hec_granted = $lessee->hec_granted;
@@ -108,14 +118,49 @@ new class extends Component {
 
     public function openMessageModal($id)
     {
-        $lessee = Lessee::find($id);
+        $lessee = Lessee::findOrFail($id);
+        $this->messageEmail = $lessee->email ?? '';
         $this->messageSubject = 'Notice for ' . $lessee->full_name;
+        $this->updatedNoticeType($this->noticeType);
         $this->modal('message-modal')->show();
+    }
+
+    public function updatedNoticeType($value)
+    {
+        if ($value === 'Notice for Payment') {
+            $this->messageContent = "Dear Lessee,\n\nThis serves as an official notice that your FLA account has a pending balance due. Please settle your dues to ensure clear compliance.\n\nThank you.";
+        } elseif ($value === 'Notice for Renewal') {
+            $this->messageContent = "Dear Lessee,\n\nYour Forest Land Agreement (FLA) validity is nearing expiration. Kindly begin compiling the requirements for renewal to maintain active registration.\n\nBest regards.";
+        } elseif ($value === 'Notice for Termination') {
+            $this->messageContent = "NOTICE OF AGREEMENT TERMINATION\n\nDear Lessee,\n\nPlease look into this formal warning regarding persistent non-compliance parameters on your FLA agreement. Unresolved clauses will initiate final termination processes.\n\nUrgent action required.";
+        }
+    }
+
+    public function sendNotification()
+    {
+        $this->validate([
+            'messageEmail' => 'required|email',
+            'messageSubject' => 'required|string',
+            'messageContent' => 'required|string',
+        ]);
+
+        $viewMap = [
+            'Notice for Payment' => 'emails.payment',
+            'Notice for Renewal' => 'emails.renewal',
+            'Notice for Termination' => 'emails.termination',
+        ];
+
+        $viewName = $viewMap[$this->noticeType] ?? 'emails.payment';
+
+        Mail::to($this->messageEmail)->send(new LesseeNotificationMail($this->messageSubject, $this->messageContent, $viewName));
+
+        Flux::toast('Email notification transmitted successfully.', variant: 'success');
+        $this->modal('message-modal')->close();
     }
 
     public function resetForm()
     {
-        $this->reset(['editingLesseeId', 'full_name', 'barangay', 'municipality', 'province', 'fla_no', 'date_issued', 'date_expiration', 'hec_granted', 'hec_developed', 'hec_undeveloped']);
+        $this->reset(['editingLesseeId', 'full_name', 'email', 'contact_number', 'barangay', 'municipality', 'province', 'fla_no', 'date_issued', 'date_expiration', 'hec_granted', 'hec_developed', 'hec_undeveloped']);
     }
 
     public function with(): array
@@ -261,10 +306,11 @@ new class extends Component {
                 <flux:text class="mt-2">Fill in the details for the lessee record.</flux:text>
             </div>
 
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:input label="Full Name" wire:model="full_name" placeholder="Juan Dela Cruz"
                     class="md:col-span-2" />
+                <flux:input label="Email Address" type="email" wire:model="email" placeholder="juan@example.com" />
+                <flux:input label="Contact Number" wire:model="contact_number" placeholder="09123456789" />
                 <flux:input label="Barangay" wire:model="barangay" placeholder="Brgy. San Isidro" />
                 <flux:input label="Municipality" wire:model="municipality" placeholder="Davao City" />
                 <flux:input label="Province" wire:model="province" placeholder="Davao del Sur" />
@@ -278,30 +324,55 @@ new class extends Component {
 
             <div class="flex">
                 <flux:spacer />
-                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel</flux:button>
+                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
+                </flux:button>
                 <flux:button type="submit" variant="primary" color="emerald">Save Lessee</flux:button>
             </div>
         </form>
     </flux:modal>
 
     <flux:modal name="message-modal" class="md:w-[500px]">
-        <div class="space-y-6">
+        <form wire:submit.prevent="sendNotification" class="space-y-6">
             <div>
-                <flux:heading size="lg">Send Message</flux:heading>
-                <flux:text class="mt-2">Send an official SMS notification regarding FLA status.</flux:text>
+                <flux:heading size="lg">Send Email</flux:heading>
+                <flux:text class="mt-2">Send an official email notification regarding FLA status.</flux:text>
             </div>
+
+            <flux:input label="Recipient Email" type="email" wire:model="messageEmail"
+                placeholder="lessee@example.com" />
+
             <flux:input label="Subject" wire:model="messageSubject" />
-            <flux:textarea label="Content" wire:model="messageContent" rows="5"
+
+            <div class="space-y-2">
+                <flux:label>Notice Type</flux:label>
+                <flux:dropdown class="w-full">
+                    <button type="button"
+                        class="w-full flex justify-between items-center text-left rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+                        <span>{{ $noticeType }}</span>
+                        <flux:icon.chevron-down variant="micro" class="text-zinc-400" />
+                    </button>
+                    <flux:menu class="min-w-[var(--trigger-width)]">
+                        <flux:menu.radio.group wire:model.live="noticeType">
+                            <flux:menu.radio value="Notice for Payment">Notice for Payment</flux:menu.radio>
+                            <flux:menu.radio value="Notice for Renewal">Notice for Renewal</flux:menu.radio>
+                            <flux:menu.radio value="Notice for Termination">Notice for Termination</flux:menu.radio>
+                        </flux:menu.radio.group>
+                    </flux:menu>
+                </flux:dropdown>
+            </div>
+
+            <flux:textarea label="Content" wire:model="messageContent" rows="6"
                 placeholder="Type your message here..." />
+
             <div class="flex">
                 <flux:spacer />
                 <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
                 </flux:button>
-                <flux:button icon="paper-airplane" variant="primary" color="emerald" disabled>Send (Future
-                    Development)
+                <flux:button type="submit" icon="paper-airplane" variant="primary" color="emerald">Send
+                    Notification
                 </flux:button>
             </div>
-        </div>
+        </form>
     </flux:modal>
 
     <flux:modal name="delete-confirmation" class="md:w-[450px]">

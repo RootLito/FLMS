@@ -66,14 +66,14 @@
             </flux:navlist.group>
         </flux:navlist>
 
-        <flux:navlist variant="outline">
+        {{-- <flux:navlist variant="outline">
             <flux:navlist.group heading="Testing" class="grid">
                 <flux:navlist.item icon="banknotes" :href="route('test-payment.index')"
                     :current="request()->routeIs('test-payment.*')" wire:navigate>
                     Test Payment
                 </flux:navlist.item>
             </flux:navlist.group>
-        </flux:navlist>
+        </flux:navlist> --}}
 
         <flux:spacer />
 
