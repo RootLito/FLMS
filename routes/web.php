@@ -1,64 +1,52 @@
 <?php
 
+use App\Http\Controllers\TestPaymentController;
+use App\Http\Controllers\InspectionReportPdfController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
-use App\Http\Controllers\TestPaymentController;
 
+// Public Routes
 Route::view('/', 'welcome')->name('home');
 
+// Authenticated & Verified Routes
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::view('/dashboard', 'admin.dashboard')
-        ->name('dashboard');
+    Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+    Route::view('/lessees', 'admin.lessee')->name('lessee.index');
+    Route::view('/property', 'admin.property')->name('property.index');
+    Route::view('/areas', 'admin.area')->name('area.index');
+    Route::view('/payments', 'admin.payment')->name('payment.index');
+    Route::view('/dl-forms', 'admin.dl-forms')->name('dl-forms.index');
 
-    Route::view('/lessees', 'admin.lessee')
-        ->name('lessee.index');
+    // Test Payment
+    Route::prefix('test-payment')->name('test-payment.')->group(function () {
+        Route::view('/', 'admin.test-payment')->name('index');
+        Route::post('/', [TestPaymentController::class, 'send'])->name('send');
+    });
 
-    Route::view('/property', 'admin.property')
-        ->name('property.index');
+    // Inspection Reports
+    Route::prefix('inspection-reports')->name('inspection.')->group(function () {
+        Route::view('/', 'admin.inspection')->name('report');
+        Route::view('/inspection-template', 'admin.inspection-template')->name('template');
+        Volt::route('/{report}/edit', 'inspection.edit-form')->name('edit');
+        Route::get('/{id}/pdf', [InspectionReportPdfController::class, 'download'])
+            ->name('pdf');
+    });
 
-    Route::view('/areas', 'admin.area')
-        ->name('area.index');
+    // Annual Reports
+    Route::prefix('annual-reports')->name('annual.')->group(function () {
+        Route::view('/', 'admin.annual')->name('report');
+        Route::view('/annual-template', 'admin.annual-template')->name('template');
+    });
 
-
-    Route::view('/payments', 'admin.payment')
-        ->name('payment.index');
-
-    Route::view('/dl-forms', 'admin.dl-forms')
-        ->name('dl-forms.index');
-
-
-
-
-
-    Route::view('/test-payment', 'admin.test-payment')
-        ->name('test-payment.index');
-    Route::post('/test-payment', [TestPaymentController::class, 'send'])
-        ->name('test-payment.send');
-
-
-    Route::view('/inspection-reports', 'admin.inspection')
-        ->name('inspection.report');
-
-    Route::view('/inspection-reports/inspection-template', 'admin.inspection-template')
-        ->name('inspection.template');
-
-    Route::view('/annual-reports', 'admin.annual')
-        ->name('annual.report');
-
-    Route::view('/annual-reports/annual-template', 'admin.annual-template')
-        ->name('annual.template');
-
+    // Settings
     Route::redirect('settings', 'settings/profile');
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Volt::route('/profile', 'settings.profile')->name('profile');
+        Volt::route('/password', 'settings.password')->name('password');
+        Volt::route('/appearance', 'settings.appearance')->name('appearance');
+    });
 
-    Volt::route('settings/profile', 'settings.profile')
-        ->name('settings.profile');
-
-    Volt::route('settings/password', 'settings.password')
-        ->name('settings.password');
-
-    Volt::route('settings/appearance', 'settings.appearance')
-        ->name('settings.appearance');
 });
 
 require __DIR__ . '/auth.php';

@@ -15,6 +15,7 @@ new class extends Component {
     public $sortDirection = 'asc';
 
     public $editingLesseeId = null;
+    public ?Lessee $viewingLessee = null; // Added for viewing details
     public $full_name, $email, $contact_number, $barangay, $municipality, $province, $fla_no;
     public $date_issued, $date_expiration, $hec_granted, $hec_developed, $hec_undeveloped;
 
@@ -37,7 +38,65 @@ new class extends Component {
         }
     }
 
-    public function save()
+    public function openAddModal()
+    {
+        $this->resetForm();
+        $this->modal('add-lessee-modal')->show();
+    }
+
+    public function store()
+    {
+        $validated = $this->validate([
+            'full_name' => 'required|string',
+            'email' => 'nullable|email|max:255',
+            'contact_number' => 'nullable|string|max:50',
+            'fla_no' => 'required|unique:lessees,fla_no',
+            'barangay' => 'nullable|string',
+            'municipality' => 'nullable|string',
+            'province' => 'nullable|string',
+            'date_issued' => 'nullable|date',
+            'date_expiration' => 'nullable|date',
+            'hec_granted' => 'nullable|numeric',
+            'hec_developed' => 'nullable|numeric',
+            'hec_undeveloped' => 'nullable|numeric',
+        ]);
+
+        Lessee::create($this->formatData($validated));
+
+        Flux::toast('New lessee added successfully.', variant: 'success');
+        $this->resetForm();
+        $this->modal('add-lessee-modal')->close();
+    }
+
+    // Added method to handle showing details
+    public function showDetails($id)
+    {
+        $this->viewingLessee = Lessee::findOrFail($id);
+        $this->modal('view-lessee-modal')->show();
+    }
+
+    public function edit($id)
+    {
+        $this->editingLesseeId = $id;
+        $lessee = Lessee::findOrFail($id);
+
+        $this->full_name = $lessee->full_name;
+        $this->email = $lessee->email;
+        $this->contact_number = $lessee->contact_number;
+        $this->barangay = $lessee->barangay;
+        $this->municipality = $lessee->municipality;
+        $this->province = $lessee->province;
+        $this->fla_no = $lessee->fla_no;
+        $this->date_issued = $lessee->date_issued?->format('Y-m-d');
+        $this->date_expiration = $lessee->date_expiration?->format('Y-m-d');
+        $this->hec_granted = $lessee->hec_granted;
+        $this->hec_developed = $lessee->hec_developed;
+        $this->hec_undeveloped = $lessee->hec_undeveloped;
+
+        $this->modal('edit-lessee-modal')->show();
+    }
+
+    public function update()
     {
         $validated = $this->validate([
             'full_name' => 'required|string',
@@ -54,7 +113,16 @@ new class extends Component {
             'hec_undeveloped' => 'nullable|numeric',
         ]);
 
-        $dataToSave = collect($validated)
+        Lessee::find($this->editingLesseeId)->update($this->formatData($validated));
+
+        Flux::toast('Lessee updated successfully.', variant: 'success');
+        $this->resetForm();
+        $this->modal('edit-lessee-modal')->close();
+    }
+
+    private function formatData(array $validated): array
+    {
+        return collect($validated)
             ->map(function ($value, $key) {
                 if ($key === 'email') {
                     return is_string($value) ? strtolower($value) : $value;
@@ -62,37 +130,6 @@ new class extends Component {
                 return is_string($value) ? strtoupper($value) : $value;
             })
             ->toArray();
-
-        if ($this->editingLesseeId) {
-            Lessee::find($this->editingLesseeId)->update($dataToSave);
-            Flux::toast('Lessee updated successfully.', variant: 'success');
-        } else {
-            Lessee::create($dataToSave);
-            Flux::toast('New lessee added successfully.', variant: 'success');
-        }
-
-        $this->resetForm();
-        $this->modal('lessee-modal')->close();
-    }
-
-    public function edit($id)
-    {
-        $this->editingLesseeId = $id;
-        $lessee = Lessee::findOrFail($id);
-
-        $this->full_name = $lessee->full_name;
-        $this->email = $lessee->email;
-        $this->contact_number = $lessee->contact_number;
-        $this->barangay = $lessee->barangay;
-        $this->municipality = $lessee->municipality;
-        $this->province = $lessee->province;
-        $this->date_issued = $lessee->date_issued?->format('Y-m-d');
-        $this->date_expiration = $lessee->date_expiration?->format('Y-m-d');
-        $this->hec_granted = $lessee->hec_granted;
-        $this->hec_developed = $lessee->hec_developed;
-        $this->hec_undeveloped = $lessee->hec_undeveloped;
-
-        $this->modal('lessee-modal')->show();
     }
 
     public function confirmDelete($id)
@@ -185,8 +222,8 @@ new class extends Component {
         <flux:spacer />
 
         <flux:button icon="arrow-down-tray">Export</flux:button>
-        <flux:button variant="primary" color="emerald" icon="plus" wire:click="resetForm"
-            x-on:click="$flux.modal('lessee-modal').show()">Add new lessee</flux:button>
+        <flux:button variant="primary" color="emerald" icon="plus" wire:click="openAddModal">Add new lessee
+        </flux:button>
     </div>
 
     <flux:table :paginate="$lessees">
@@ -264,7 +301,9 @@ new class extends Component {
                                 <flux:button icon="ellipsis-horizontal" size="sm" variant="filled" />
 
                                 <flux:menu>
-                                    <flux:menu.item icon="eye">View Details</flux:menu.item>
+                                    <!-- Updated Menu Item trigger linked to showDetails -->
+                                    <flux:menu.item icon="eye" wire:click="showDetails('{{ $lessee->id }}')">View
+                                        Details</flux:menu.item>
                                     <flux:menu.item icon="pencil-square" wire:click="edit('{{ $lessee->id }}')">
                                         Edit Lessee
                                     </flux:menu.item>
@@ -299,17 +338,107 @@ new class extends Component {
         </flux:table.rows>
     </flux:table>
 
-    <flux:modal name="lessee-modal" class="md:w-[800px]">
-        <form wire:submit="save" class="space-y-6">
+    <!-- VIEW LESSEE DETAILS MODAL -->
+    <flux:modal name="view-lessee-modal" class="md:w-[700px]">
+        <div class="space-y-6">
             <div>
-                <flux:heading size="lg">{{ $editingLesseeId ? 'Edit Lessee' : 'Add New Lessee' }}</flux:heading>
-                <flux:text class="mt-2">Fill in the details for the lessee record.</flux:text>
+                <flux:heading size="lg">Lessee Details</flux:heading>
+                <flux:text class="mt-2">Comprehensive profile and status information.</flux:text>
+            </div>
+
+            @if ($viewingLessee)
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700">
+                    <div>
+                        <span class="block text-xs font-medium text-zinc-400 uppercase tracking-wider">Full Name</span>
+                        <span
+                            class="font-semibold text-zinc-800 dark:text-zinc-100">{{ $viewingLessee->full_name }}</span>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-medium text-zinc-400 uppercase tracking-wider">FLA Number</span>
+                        <span class="font-mono text-zinc-800 dark:text-zinc-100">{{ $viewingLessee->fla_no }}</span>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-medium text-zinc-400 uppercase tracking-wider">Email
+                            Address</span>
+                        <span class="text-zinc-800 dark:text-zinc-100">{{ $viewingLessee->email ?: 'N/A' }}</span>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-medium text-zinc-400 uppercase tracking-wider">Contact
+                            Number</span>
+                        <span
+                            class="text-zinc-800 dark:text-zinc-100">{{ $viewingLessee->contact_number ?: 'N/A' }}</span>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-medium text-zinc-400 uppercase tracking-wider">Address
+                            Location</span>
+                        <span class="text-zinc-800 dark:text-zinc-100">
+                            {{ $viewingLessee->barangay }}, {{ $viewingLessee->municipality }},
+                            {{ $viewingLessee->province }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-medium text-zinc-400 uppercase tracking-wider">Validity
+                            Period</span>
+                        <span class="text-zinc-800 dark:text-zinc-100">
+                            {{ $viewingLessee->date_issued?->format('M d, Y') }} —
+                            {{ $viewingLessee->date_expiration?->format('M d, Y') }}
+                        </span>
+                    </div>
+
+                    <div class="md:col-span-2 space-y-3 pt-2 border-t border-zinc-200 dark:border-zinc-700">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Hectares
+                                Granted</span>
+                            <span
+                                class="text-zinc-800 dark:text-zinc-100 font-medium">{{ $viewingLessee->hec_granted }}
+                                ha</span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Hectares
+                                Developed</span>
+                            <span
+                                class="text-zinc-800 dark:text-zinc-100 font-medium">{{ $viewingLessee->hec_developed }}
+                                ha</span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Hectares
+                                Undeveloped</span>
+                            <span
+                                class="text-zinc-800 dark:text-zinc-100 font-medium">{{ $viewingLessee->hec_undeveloped }}
+                                ha</span>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost">Close</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    <!-- ADD LESSEE MODAL -->
+    <flux:modal name="add-lessee-modal" class="md:w-[800px]">
+        <form wire:submit="store" class="space-y-6">
+            <div>
+                <flux:heading size="lg">Add New Lessee</flux:heading>
+                <flux:text class="mt-2">Fill in the details for the new lessee record.</flux:text>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <flux:input label="Full Name" wire:model="full_name" placeholder="Juan Dela Cruz"
                     class="md:col-span-2" />
-                <flux:input label="Email Address" type="email" wire:model="email" placeholder="juan@example.com" />
+                <flux:input label="Email Address" type="email" wire:model="email"
+                    placeholder="juan@example.com" />
                 <flux:input label="Contact Number" wire:model="contact_number" placeholder="09123456789" />
                 <flux:input label="Barangay" wire:model="barangay" placeholder="Brgy. San Isidro" />
                 <flux:input label="Municipality" wire:model="municipality" placeholder="Davao City" />
@@ -327,6 +456,40 @@ new class extends Component {
                 <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
                 </flux:button>
                 <flux:button type="submit" variant="primary" color="emerald">Save Lessee</flux:button>
+            </div>
+        </form>
+    </flux:modal>
+
+    <!-- EDIT LESSEE MODAL -->
+    <flux:modal name="edit-lessee-modal" class="md:w-[800px]">
+        <form wire:submit="update" class="space-y-6">
+            <div>
+                <flux:heading size="lg">Edit Lessee</flux:heading>
+                <flux:text class="mt-2">Update the details for this lessee record.</flux:text>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <flux:input label="Full Name" wire:model="full_name" placeholder="Juan Dela Cruz"
+                    class="md:col-span-2" />
+                <flux:input label="Email Address" type="email" wire:model="email"
+                    placeholder="juan@example.com" />
+                <flux:input label="Contact Number" wire:model="contact_number" placeholder="09123456789" />
+                <flux:input label="Barangay" wire:model="barangay" placeholder="Brgy. San Isidro" />
+                <flux:input label="Municipality" wire:model="municipality" placeholder="Davao City" />
+                <flux:input label="Province" wire:model="province" placeholder="Davao del Sur" />
+                <flux:input label="FLA No." wire:model="fla_no" placeholder="FLA-2024-00123" />
+                <flux:input label="Date Issued" type="date" wire:model="date_issued" />
+                <flux:input label="Date of Expiration" type="date" wire:model="date_expiration" />
+                <flux:input label="Hec. Granted" type="number" step="0.01" wire:model="hec_granted" />
+                <flux:input label="Hec. Developed" type="number" step="0.01" wire:model="hec_developed" />
+                <flux:input label="Hec. Undeveloped" type="number" step="0.01" wire:model="hec_undeveloped" />
+            </div>
+
+            <div class="flex">
+                <flux:spacer />
+                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
+                </flux:button>
+                <flux:button type="submit" variant="primary" color="emerald">Update Lessee</flux:button>
             </div>
         </form>
     </flux:modal>

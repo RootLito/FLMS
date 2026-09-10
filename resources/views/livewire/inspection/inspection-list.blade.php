@@ -35,9 +35,6 @@ new class extends Component {
     public $pond_types = [];
     public $signature_data = null;
 
-    public $messageSubject = '';
-    public $messageContent = '';
-
     public $deletingReportId = null;
     public $flaConfirmationInput = '';
     public $expectedFlaNo = '';
@@ -161,13 +158,6 @@ new class extends Component {
         Flux::toast('Inspection Report record deleted.', variant: 'success');
     }
 
-    public function openMessageModal($id)
-    {
-        $report = InspectionReport::with('lessee')->find($id);
-        $this->messageSubject = 'Notice for ' . ($report->lessee->full_name ?? 'Lessee');
-        $this->modal('message-modal')->show();
-    }
-
     public function resetForm()
     {
         $this->reset(['editingReportId', 'lessee_id', 'from', 'to', 'fla_no', 'barangay', 'municipality', 'province', 'date_issued', 'date_expire', 'date_inspection', 'no_hec_granted', 'no_hec_developed', 'no_hect_undeveloped', 'remarks', 'with_pending_admin_case', 'with_pending_judicial_case', 'items', 'stocking', 'harvesting', 'marketing', 'site_photos', 'improvements', 'financial_values', 'stocking_records', 'harvest_records', 'pond_types', 'signature_data']);
@@ -254,12 +244,13 @@ new class extends Component {
                                 <flux:button icon="ellipsis-horizontal" size="sm" />
 
                                 <flux:menu>
-                                    <flux:menu.item icon="pencil-square" wire:click="edit('{{ $report->id }}')">
-                                        Edit Report
+                                    <flux:menu.item icon="eye" :href="route('inspection.pdf', $report->id)"
+                                        target="_blank">
+                                        View Submission
                                     </flux:menu.item>
-                                    <flux:menu.item icon="chat-bubble-bottom-center-text"
-                                        wire:click="openMessageModal('{{ $report->id }}')">
-                                        Send Notification
+                                    <flux:menu.item icon="pencil-square"
+                                        :href="route('inspection.edit', ['report' => $report->id])">
+                                        Edit Report
                                     </flux:menu.item>
                                     <flux:menu.separator />
                                     <flux:menu.item icon="trash" variant="danger"
@@ -346,27 +337,6 @@ new class extends Component {
                 <flux:button type="submit" variant="primary" color="emerald">Save Report</flux:button>
             </div>
         </form>
-    </flux:modal>
-
-    <flux:modal name="message-modal" class="md:w-[500px]">
-        <div class="space-y-6">
-            <div>
-                <flux:heading size="lg">Send Message</flux:heading>
-                <flux:text class="mt-2">Send an official SMS notification regarding inspection report/FLA status.
-                </flux:text>
-            </div>
-            <flux:input label="Subject" wire:model="messageSubject" />
-            <flux:textarea label="Content" wire:model="messageContent" rows="5"
-                placeholder="Type your message here..." />
-            <div class="flex">
-                <flux:spacer />
-                <flux:button x-on:click="$dispatch('modal-close')" variant="ghost" class="mr-2">Cancel
-                </flux:button>
-                <flux:button icon="paper-airplane" variant="primary" color="emerald" disabled>
-                    Send (Future Development)
-                </flux:button>
-            </div>
-        </div>
     </flux:modal>
 
     <flux:modal name="delete-confirmation" class="md:w-[450px]">

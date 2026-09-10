@@ -130,6 +130,9 @@ new class extends Component {
 
                                 <flux:menu>
                                     <flux:menu.item icon="eye">View Submission</flux:menu.item>
+                                    <flux:menu.item icon="pencil-square" wire:click="edit('{{ $report->id }}')">
+                                        Edit Report
+                                    </flux:menu.item>
                                     <flux:menu.separator />
                                     <flux:menu.item icon="trash" variant="danger"
                                         wire:click="confirmDelete('{{ $report->id }}')">
