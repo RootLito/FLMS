@@ -56,11 +56,13 @@ class InspectionReport extends Model implements CanBeSigned
         'harvesting' => 'array',
         'marketing' => 'array',
         'site_photos' => 'array',
-        'improvements' => AsArrayObject::class,
-        'financial_values' => AsArrayObject::class,
+
+        'improvements' => 'array',
+        'financial_values' => 'array',
         'stocking_records' => 'array',
-        'harvest_records' => AsArrayObject::class,
-        'pond_types' => AsArrayObject::class,
+        'harvest_records' => 'array',
+        'pond_types' => 'array',
+
         'with_pending_admin_case' => 'boolean',
         'with_pending_judicial_case' => 'boolean',
         'signature_data' => 'string',

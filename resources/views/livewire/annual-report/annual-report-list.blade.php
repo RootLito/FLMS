@@ -91,7 +91,7 @@ new class extends Component {
 
         <flux:table.rows>
             @forelse ($reports as $report)
-                <flux:table.row :key="$report->id">
+                <flux:table.row :key="$report->id" class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                     <flux:table.cell sticky>
                         <div class="flex flex-col">
                             <span class="font-bold text-zinc-800 dark:text-white leading-tight">

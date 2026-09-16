@@ -43,16 +43,17 @@ mount(function (InspectionReport $report) {
         'no_hec_developed' => $report->no_hec_developed ?? '',
         'no_hect_undeveloped' => $report->no_hect_undeveloped ?? '',
 
-        'improvements' => $report->improvements ?? [],
-        'financial_values' => $report->financial_values ?? [],
-        'stocking_records' => $report->stocking_records ?? [],
-        'harvest_records' => $report->harvest_records ?? [],
-        'pond_types' => $report->pond_types ?? [],
+        // Force conversion to array to prevent Collection/Object issues
+        'improvements' => is_object($report->improvements) ? $report->improvements->toArray() : $report->improvements ?? [],
+        'financial_values' => is_object($report->financial_values) ? $report->financial_values->toArray() : $report->financial_values ?? [],
+        'stocking_records' => is_object($report->stocking_records) ? $report->stocking_records->toArray() : $report->stocking_records ?? [],
+        'harvest_records' => is_object($report->harvest_records) ? $report->harvest_records->toArray() : $report->harvest_records ?? [],
+        'pond_types' => is_object($report->pond_types) ? $report->pond_types->toArray() : $report->pond_types ?? [],
 
-        'items' => $report->items ?? [],
-        'stocking' => $report->stocking ?? [],
-        'harvesting' => $report->harvesting ?? [],
-        'marketing' => $report->marketing ?? [],
+        'items' => is_object($report->items) ? $report->items->toArray() : $report->items ?? [],
+        'stocking' => is_object($report->stocking) ? $report->stocking->toArray() : $report->stocking ?? [],
+        'harvesting' => is_object($report->harvesting) ? $report->harvesting->toArray() : $report->harvesting ?? [],
+        'marketing' => is_object($report->marketing) ? $report->marketing->toArray() : $report->marketing ?? [],
 
         'cases' => [
             'admin_case' => $report->with_pending_admin_case ? 'Yes' : 'No',
@@ -65,10 +66,10 @@ mount(function (InspectionReport $report) {
         'officer_name' => $report->inspecting_officer ?? '',
         'designation' => $report->designation ?? '',
         'signature_data' => '',
-        'site_photos' => [], 
+        'site_photos' => [],
     ];
 
-    $this->existingPhotos = $report->site_photos ?? [];
+    $this->existingPhotos = is_object($report->site_photos) ? $report->site_photos->toArray() : $report->site_photos ?? [];
 });
 
 $updatedFormDataLesseeId = function ($value) {
@@ -188,13 +189,13 @@ $submit = function () {
                 'filename' => $filename,
                 'from_ips' => [request()->ip()],
                 'certified' => config('sign-pad.certify_documents', false),
-            ]
+            ],
         );
     }
 
     Flux::toast(variant: 'success', heading: 'Updated', text: 'Annual Report updated successfully!');
-    
-    return redirect()->route('inspection.list'); // Adjust list route name as needed
+
+    return redirect()->route('inspection.list');
 };
 
 ?>

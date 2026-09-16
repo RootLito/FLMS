@@ -28,7 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('inspection-reports')->name('inspection.')->group(function () {
         Route::view('/', 'admin.inspection')->name('report');
         Route::view('/inspection-template', 'admin.inspection-template')->name('template');
-        Volt::route('/{report}/edit', 'inspection.edit-form')->name('edit');
+        Route::get('/{report}/edit', function (App\Models\InspectionReport $report) {
+            return view('admin.inspection-edit', ['report' => $report]);
+        })->name('edit');
         Route::get('/{id}/pdf', [InspectionReportPdfController::class, 'download'])
             ->name('pdf');
     });
