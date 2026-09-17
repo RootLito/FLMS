@@ -1,6 +1,6 @@
 @props(['formData'])
 
-<div>
+<div class="space-y-6">
     <h2 class="text-xl font-bold text-gray-800 mb-2">E. Remarks and Recommendation/s</h2>
     <flux:separator class="my-6" />
 

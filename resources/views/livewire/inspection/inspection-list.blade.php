@@ -186,7 +186,7 @@ new class extends Component {
 <div class="w-full">
     <div class="mb-8 w-full flex gap-2">
         <div class="w-120">
-            <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search reports..." />
+            <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search reports by FLA or Lessee..." />
         </div>
 
         <flux:spacer />
@@ -246,7 +246,7 @@ new class extends Component {
                                 <flux:menu>
                                     <flux:menu.item icon="eye" :href="route('inspection.pdf', $report->id)"
                                         target="_blank">
-                                        View Submission
+                                        View Report
                                     </flux:menu.item>
                                     <flux:menu.item icon="pencil-square"
                                         :href="route('inspection.edit', ['report' => $report->id])">

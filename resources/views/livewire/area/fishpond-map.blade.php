@@ -10,11 +10,9 @@ new class extends Component {
 
     public function with(): array
     {
-        $key = env('MAPTILER_API_KEY');
-        $rawUrl = env('MAPTILER_URL');
+        $key = config('services.maptiler.key');
+        $rawUrl = config('services.maptiler.url');
         $tileUrl = str_replace('{key}', $key, $rawUrl);
-
-        // dd($key, $rawUrl);
 
         return [
             'tileUrl' => $tileUrl,

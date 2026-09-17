@@ -1,10 +1,8 @@
-@props(['formData'])
-
-<div>
+<div class="space-y-6" x-data="{ showSlider: false, currentIndex: 0 }">
     <h2 class="text-xl font-bold text-gray-800 mb-2">F. Documentation and Authentication</h2>
     <flux:separator class="my-6" />
 
-    <div class="flex flex-col gap-y-8" x-data="{ showSlider: false, currentIndex: 0 }">
+    <div class="flex flex-col gap-y-8">
         <div class="w-full grid grid-cols-2 gap-8">
             <div class="flex flex-col gap-y-4">
                 <div>
@@ -19,24 +17,55 @@
 
                 <div>
                     <p class="text-sm font-medium text-zinc-700">Preview</p>
-                    <div class="flex flex-wrap gap-2 mt-2 p-2 border border-zinc-200 rounded-lg min-h-[80px] bg-white">
+                    <div class="flex flex-wrap gap-3 mt-2 p-3 border border-zinc-200 rounded-lg min-h-[90px] bg-white">
+
+                        {{-- 1. EXISTING PHOTOS FROM DATABASE --}}
+                        @if (!empty($existingPhotos))
+                            @foreach ($existingPhotos as $index => $photoPath)
+                                <div class="relative group">
+                                    <img src="{{ Storage::url($photoPath) }}"
+                                        class="h-16 w-16 object-cover rounded border border-zinc-300 cursor-pointer hover:ring-2 hover:ring-zinc-400 transition-all"
+                                        @click="showSlider = true; currentIndex = {{ $index }}" />
+
+                                    {{-- Remove Button for Existing Photo --}}
+                                    <button type="button" wire:click="removeExistingPhoto({{ $index }})"
+                                        class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-md hover:bg-red-700 focus:outline-none w-5 h-5 flex items-center justify-center text-xs">
+                                        &times;
+                                    </button>
+                                </div>
+                            @endforeach
+                        @endif
+
+                        {{-- 2. NEWLY UPLOADED TEMPORARY PHOTOS --}}
                         @if (!empty($formData['site_photos']))
-                            @foreach ($formData['site_photos'] as $index => $file)
+                            @foreach ($formData['site_photos'] as $newIndex => $file)
                                 @php
                                     try {
                                         $url = $file->temporaryUrl();
                                     } catch (\Exception $e) {
                                         $url = null;
                                     }
+                                    $totalExisting = count($existingPhotos ?? []);
+                                    $currentIndexComputed = $totalExisting + $newIndex;
                                 @endphp
-
                                 @if ($url)
-                                    <img src="{{ $url }}"
-                                        class="h-16 w-16 object-cover rounded border border-zinc-300 cursor-pointer hover:ring-2 hover:ring-zinc-400 transition-all"
-                                        @click="showSlider = true; currentIndex = {{ $index }}" />
+                                    <div class="relative group">
+                                        <img src="{{ $url }}"
+                                            class="h-16 w-16 object-cover rounded border border-zinc-300 cursor-pointer hover:ring-2 hover:ring-zinc-400 transition-all"
+                                            @click="showSlider = true; currentIndex = {{ $currentIndexComputed }}" />
+
+                                        {{-- Remove Button for New Photo --}}
+                                        <button type="button" wire:click="removePhoto({{ $newIndex }})"
+                                            class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-md hover:bg-red-700 focus:outline-none w-5 h-5 flex items-center justify-center text-xs">
+                                            &times;
+                                        </button>
+                                    </div>
                                 @endif
                             @endforeach
-                        @else
+                        @endif
+
+                        {{-- EMPTY STATE --}}
+                        @if (empty($existingPhotos) && empty($formData['site_photos']))
                             <div class="flex items-center justify-center w-full h-16">
                                 <span class="text-xs text-zinc-400 italic">No files selected</span>
                             </div>
@@ -139,53 +168,11 @@
                     <flux:input wire:model="formData.officer_name" label="Full Name (Printed)"
                         placeholder="e.g. JUAN DELA CRUZ" />
                 </div>
+
+                <div>
+                    <flux:input wire:model="formData.designation" label="Designation" />
+                </div>
             </div>
-
-
-
-        </div>
-
-        <div x-show="showSlider" x-transition.opacity x-cloak @keydown.window.escape="showSlider = false"
-            class="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4">
-
-            <button @click="showSlider = false" class="absolute top-6 right-6 text-white hover:text-zinc-300 z-[10000]">
-                <flux:icon.x-mark class="w-10 h-10" />
-            </button>
-
-            <button
-                @click="currentIndex = (currentIndex > 0) ? currentIndex - 1 : {{ count($formData['site_photos'] ?? []) }} - 1"
-                class="absolute left-6 text-white p-3 hover:bg-white/10 rounded-full transition-colors">
-                <flux:icon.chevron-left class="w-8 h-8" />
-            </button>
-
-            <div class="max-w-5xl max-h-[85vh] flex flex-col items-center">
-                @if (!empty($formData['site_photos']))
-                    @foreach ($formData['site_photos'] as $index => $file)
-                        @php
-                            try {
-                                $url = $file->temporaryUrl();
-                            } catch (\Exception $e) {
-                                $url = null;
-                            }
-                        @endphp
-
-                        @if ($url)
-                            <img x-show="currentIndex === {{ $index }}" src="{{ $url }}"
-                                class="max-w-full max-h-full object-contain shadow-2xl rounded">
-                        @endif
-                    @endforeach
-                @endif
-                <p class="text-white mt-6 bg-zinc-800 px-3 py-1 rounded-full text-xs font-mono">
-                    IMAGE <span x-text="currentIndex + 1"></span> /
-                    <span>{{ count($formData['site_photos'] ?? []) }}</span>
-                </p>
-            </div>
-
-            <button
-                @click="currentIndex = (currentIndex < {{ count($formData['site_photos'] ?? []) }} - 1) ? currentIndex + 1 : 0"
-                class="absolute right-6 text-white p-3 hover:bg-white/10 rounded-full transition-colors">
-                <flux:icon.chevron-right class="w-8 h-8" />
-            </button>
         </div>
     </div>
 </div>

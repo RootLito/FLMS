@@ -26,8 +26,20 @@ state([
     'existingPhotos' => [],
 ]);
 
-mount(function (InspectionReport $report) {
+mount(function ($reportId) {
+    $report = InspectionReport::findOrFail($reportId);
+
     $this->reportId = $report->id;
+
+    $signature = $report->signature;
+    $signatureDataUrl = '';
+
+    if ($signature && Storage::disk(config('sign-pad.disk_name', 'local'))->exists(config('sign-pad.signatures_path', 'signatures') . '/' . $signature->filename)) {
+        $path = Storage::disk(config('sign-pad.disk_name', 'local'))->path(config('sign-pad.signatures_path', 'signatures') . '/' . $signature->filename);
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data = file_get_contents($path);
+        $signatureDataUrl = 'data:image/' . $type . ';base64,' . base64_encode($data);
+    }
 
     $this->formData = [
         'lessee_id' => $report->lessee_id ?? '',
@@ -43,7 +55,6 @@ mount(function (InspectionReport $report) {
         'no_hec_developed' => $report->no_hec_developed ?? '',
         'no_hect_undeveloped' => $report->no_hect_undeveloped ?? '',
 
-        // Force conversion to array to prevent Collection/Object issues
         'improvements' => is_object($report->improvements) ? $report->improvements->toArray() : $report->improvements ?? [],
         'financial_values' => is_object($report->financial_values) ? $report->financial_values->toArray() : $report->financial_values ?? [],
         'stocking_records' => is_object($report->stocking_records) ? $report->stocking_records->toArray() : $report->stocking_records ?? [],
@@ -55,17 +66,15 @@ mount(function (InspectionReport $report) {
         'harvesting' => is_object($report->harvesting) ? $report->harvesting->toArray() : $report->harvesting ?? [],
         'marketing' => is_object($report->marketing) ? $report->marketing->toArray() : $report->marketing ?? [],
 
-        'cases' => [
-            'admin_case' => $report->with_pending_admin_case ? 'Yes' : 'No',
-            'admin_details' => $report->admin_case_details ?? '',
-            'judicial_case' => $report->with_pending_judicial_case ? 'Yes' : 'No',
-            'judicial_details' => $report->judicial_case_details ?? '',
-        ],
+        'admin_case' => $report->with_pending_admin_case ? 'Yes' : 'No',
+        'admin_details' => $report->admin_case_details ?? '',
+        'judicial_case' => $report->with_pending_judicial_case ? 'Yes' : 'No',
+        'judicial_details' => $report->judicial_case_details ?? '',
 
         'remarks' => $report->remarks_recommendation ?? '',
         'officer_name' => $report->inspecting_officer ?? '',
         'designation' => $report->designation ?? '',
-        'signature_data' => '',
+        'signature_data' => $signatureDataUrl ?? '',
         'site_photos' => [],
     ];
 
@@ -138,7 +147,7 @@ $submit = function () {
         }
     }
 
-    $report->update([
+    $updatedData = [
         'lessee_id' => $this->formData['lessee_id'],
         'from' => $this->formData['report_year_from'] ?: null,
         'to' => $this->formData['report_year_to'] ?: null,
@@ -164,15 +173,19 @@ $submit = function () {
         'marketing' => $this->formData['marketing'],
         'site_photos' => $savedPhotoPaths,
 
-        'with_pending_admin_case' => $this->formData['cases']['admin_case'] === 'Yes',
-        'admin_case_details' => $this->formData['cases']['admin_details'],
-        'with_pending_judicial_case' => $this->formData['cases']['judicial_case'] === 'Yes',
-        'judicial_case_details' => $this->formData['cases']['judicial_details'],
+        'with_pending_admin_case' => ($this->formData['admin_case'] ?? '') === 'Yes',
+        'admin_case_details' => $this->formData['admin_details'] ?? '',
+        'with_pending_judicial_case' => ($this->formData['judicial_case'] ?? '') === 'Yes',
+        'judicial_case_details' => $this->formData['judicial_details'] ?? '',
 
-        'remarks_recommendation' => $this->formData['remarks'],
-        'inspecting_officer' => $this->formData['officer_name'],
-        'designation' => $this->formData['designation'],
-    ]);
+        'remarks_recommendation' => $this->formData['remarks'] ?? '',
+        'inspecting_officer' => $this->formData['officer_name'] ?? '',
+        'designation' => $this->formData['designation'] ?? '',
+    ];
+
+    // dd($updatedData);
+
+    $report->update($updatedData);
 
     if (!empty($this->formData['signature_data'])) {
         $base64Image = preg_replace('/^data:image\/\w+;base64,/', '', $this->formData['signature_data']);
@@ -183,7 +196,7 @@ $submit = function () {
         Storage::disk(config('sign-pad.disk_name', 'local'))->put(config('sign-pad.signatures_path', 'signatures') . "/{$filename}", $decodedImage);
 
         $report->signature()->updateOrCreate(
-            ['inspection_report_id' => $report->id],
+            [],
             [
                 'uuid' => $uuid,
                 'filename' => $filename,
@@ -195,7 +208,22 @@ $submit = function () {
 
     Flux::toast(variant: 'success', heading: 'Updated', text: 'Annual Report updated successfully!');
 
-    return redirect()->route('inspection.list');
+    return redirect()->route('inspection.report');
+};
+
+$removeExistingPhoto = function ($index) {
+    if (isset($this->existingPhotos[$index])) {
+        Storage::disk('public')->delete($this->existingPhotos[$index]);
+        unset($this->existingPhotos[$index]);
+        $this->existingPhotos = array_values($this->existingPhotos);
+    }
+};
+
+$removePhoto = function ($index) {
+    if (isset($this->formData['site_photos'][$index])) {
+        unset($this->formData['site_photos'][$index]);
+        $this->formData['site_photos'] = array_values($this->formData['site_photos']);
+    }
 };
 
 ?>

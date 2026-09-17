@@ -293,7 +293,7 @@ new class extends Component {
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
                             <flux:tooltip content="Send Message">
-                                <flux:button icon="envelope" size="sm" variant="filled"
+                                <flux:button icon="envelope" icon:variant="outline" size="sm" variant="filled"
                                     wire:click="openMessageModal('{{ $lessee->id }}')" />
                             </flux:tooltip>
 
@@ -301,7 +301,6 @@ new class extends Component {
                                 <flux:button icon="ellipsis-horizontal" size="sm" variant="filled" />
 
                                 <flux:menu>
-                                    <!-- Updated Menu Item trigger linked to showDetails -->
                                     <flux:menu.item icon="eye" wire:click="showDetails('{{ $lessee->id }}')">View
                                         Details</flux:menu.item>
                                     <flux:menu.item icon="pencil-square" wire:click="edit('{{ $lessee->id }}')">

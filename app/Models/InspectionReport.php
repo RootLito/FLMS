@@ -30,7 +30,6 @@ class InspectionReport extends Model implements CanBeSigned
         'stocking',
         'harvesting',
         'marketing',
-        'remarks',
         'site_photos',
         'signature_data',
         'improvements',
@@ -40,6 +39,11 @@ class InspectionReport extends Model implements CanBeSigned
         'pond_types',
         'with_pending_admin_case',
         'with_pending_judicial_case',
+        'admin_case_details',
+        'judicial_case_details',
+        'remarks_recommendation',
+        'inspecting_officer',
+        'designation',
     ];
 
     protected $casts = [

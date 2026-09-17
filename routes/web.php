@@ -29,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/', 'admin.inspection')->name('report');
         Route::view('/inspection-template', 'admin.inspection-template')->name('template');
         Route::get('/{report}/edit', function (App\Models\InspectionReport $report) {
-            return view('admin.inspection-edit', ['report' => $report]);
+            return view('admin.inspection-edit', ['reportId' => $report->id]);
         })->name('edit');
         Route::get('/{id}/pdf', [InspectionReportPdfController::class, 'download'])
             ->name('pdf');
