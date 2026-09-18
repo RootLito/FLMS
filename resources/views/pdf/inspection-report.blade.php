@@ -13,12 +13,8 @@
             margin-left: 0.75in;
             margin-right: 0.75in;
             font-family: 'Cambria', serif;
+            font-size: 12pt;
             line-height: 1.25;
-        }
-
-        body {
-            font-family: 'Cambria', serif;
-            font-size: 11pt;
         }
 
         .text-center {
@@ -38,7 +34,7 @@
         }
 
         .indent {
-            text-indent: 30px;
+            text-indent: 40px;
         }
 
         .page-break {
@@ -46,22 +42,43 @@
         }
 
         table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        th,
+        td {
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+
+
+
+
+
+
+        .lessee-info-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
         }
 
-        td,
-        th {
-            vertical-align: top;
-            padding: 2px 0;
+        .lessee-info-table td:first-child {
+            width: 65%;
+        }
+
+        .lessee-info-table td:last-child {
+            width: 35%;
         }
     </style>
 </head>
 
 <body>
 
-    {{-- PAGE 1 --}}
     <div class="text-center font-bold" style="margin-bottom: 20px;">
         <h3>REPORT OF INSPECTION AND VERIFICATION OF IMPROVEMENTS</h3>
     </div>
@@ -88,55 +105,115 @@
     <p class="text-justify indent" style="margin-bottom: 15px;">
         I have the honor to inform you that an ocular inspection and verification of improvements was conducted by the
         undersigned in the fishpond area covered by FLA/ASC/Fp. A. No. <span
-            class="underline">{{ $report->fla_no ?? '________________' }}</span> located in Bgry. <span
-            class="underline">{{ $report->barangay ?? '___________________' }}</span>, Municipality of <span
-            class="underline">{{ $report->municipality ?? '_______________________' }}</span>, Province of <span
-            class="underline">{{ $report->province ?? '__________________________' }}</span>, and I hereby certify that
+            class="underline">{{ ucwords(strtolower($report->fla_no ?? '________________')) }}</span> located in Bgry.
+        <span class="underline">{{ ucwords(strtolower($report->barangay ?? '___________________')) }}</span>,
+        Municipality of <span
+            class="underline">{{ ucwords(strtolower($report->municipality ?? '_______________________')) }}</span>,
+        Province of <span
+            class="underline">{{ ucwords(strtolower($report->province ?? '__________________________')) }}</span>, and I
+        hereby certify that
         the following are the kind and extent of improvements found existing in the area and production thereof.
     </p>
 
-    <table>
+    <table class="lessee-info-table">
         <tr>
-            <td style="width: 55%;">Name of Lessee/Applicant: <span
-                    class="underline">{{ $report->lessee->full_name ?? '___________________________________' }}</span>
+            <td>
+                <span>Name of Lessee/Applicant:</span>
+                <span style="">
+                    {{ ucwords(strtolower($report->lessee->full_name ?? '___________________________________')) }}
+                </span>
             </td>
-            <td style="width: 45%;">FLA/ASC/Fp. A. No. <span
-                    class="underline">{{ $report->fla_no ?? '_________________' }}</span></td>
-        </tr>
-        <tr>
-            <td>Address: <span class="underline">{{ $report->barangay }}, {{ $report->municipality }},
-                    {{ $report->province }}</span></td>
-            <td>Date Issued: <span
-                    class="underline">{{ $report->date_issued ? \Carbon\Carbon::parse($report->date_issued)->format('m/d/Y') : '__________________________' }}</span>
-            </td>
-        </tr>
-        <tr>
-            <td>No. of hectares granted: <span
-                    class="underline">{{ $report->no_hec_granted ?? '_______________________________________' }}</span>
-            </td>
-            <td>Date of Expiration: <span
-                    class="underline">{{ $report->date_expire ? \Carbon\Carbon::parse($report->date_expire)->format('m/d/Y') : '__________________' }}</span>
+            <td>
+                <span>FLA/ASC/Fp. A. No.:</span>
+                <span>
+                    {{ ucwords(strtolower($report->fla_no ?? '_________________')) }}
+                </span>
             </td>
         </tr>
+
         <tr>
-            <td>No. of hectares developed: <span
-                    class="underline">{{ $report->no_hec_developed ?? '____________________________________' }}</span>
+            <td>
+                <span>Address:</span>
+                <span>
+                    {{ ucwords(
+                        strtolower(($report->barangay ?? '') . ', ' . ($report->municipality ?? '') . ', ' . ($report->province ?? '')),
+                    ) }}
+                </span>
             </td>
-            <td>No. of hectares undeveloped: <span
-                    class="underline">{{ $report->no_hect_undeveloped ?? '_______' }}</span></td>
+            <td>
+                <span>Date Issued:</span>
+                <span>
+                    {{ $report->date_issued
+                        ? \Carbon\Carbon::parse($report->date_issued)->format('m/d/Y')
+                        : '__________________________' }}
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <span>No. of hectares granted:</span>
+                <span>
+                    {{ $report->no_hec_granted ?? '_______________________________________' }}
+                </span>
+            </td>
+            <td>
+                <span>Date of Expiration:</span>
+                <span>
+                    {{ $report->date_expire ? \Carbon\Carbon::parse($report->date_expire)->format('m/d/Y') : '__________________' }}
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <span>No. of hectares developed:</span>
+                <span>
+                    {{ $report->no_hec_developed ?? '____________________________________' }}
+                </span>
+            </td>
+            <td>
+                <span>No. of hectares undeveloped:</span>
+                <span>
+                    {{ $report->no_hect_undeveloped ?? '' }}
+                </span>
+            </td>
         </tr>
     </table>
+
+    <p style="margin: 0">
+        <strong>
+            <span style="margin-right: 75px;">A. Kind and Extent of Improvements</span> 
+            <span style="width: 200px; margin-right: 75px;">Date Introduced</span> 
+            <span style="width: 200px;">Value/Cost (Php)</span>
+        </strong>
+    </p>
+    <p style="text-indent: 18px;">1. &nbsp;Clearings</p>
+    <p style="text-indent: 36px;">Area Cleared:</p>
+    <p style="text-indent: 36px;">Main Dike:</p>
+    <p style="text-indent: 36px;">Secondary Dikes:</p>
+
+
+
+
+
+
+
+
+
+
 
     <table>
         <thead>
             <tr>
-                <th style="width: 50%; text-align: left;">Kind and Extent of Improvements</th>
+                <th style="width: 50%; text-align: left;">A. Kind and Extent of Improvements</th>
                 <th style="width: 25%; text-align: left;">Date Introduced</th>
-                <th style="width: 25%; text-align: left;">Value/Cost (Php)</th>
+                <th style="width: 25%; text-align: left;"></th>
             </tr>
         </thead>
         <tbody>
             <tr>
+                <td></td>
                 <td colspan="3">Clearings:</td>
             </tr>
             <tr>
@@ -259,14 +336,14 @@
     <p style="margin: 4px 0;">No. of Personnel/Workers Registered in (FishR): <span
             class="underline">{{ $report->improvements['fishr_workers'] ?? '____________________' }}</span></p>
 
-    <div style="margin-top: 10px;">Operation and Production</div>
+    <div style="margin-top: 10px; font-weight: bold;">B. Operation and Production</div>
     <table>
         <thead>
             <tr>
-                <th style="width: 30%; text-align: left;">SPECIES STOCKED</th>
-                <th style="width: 25%; text-align: left;">SOURCE</th>
-                <th style="width: 20%; text-align: left;">QUANTITY</th>
-                <th style="width: 25%; text-align: left;">VALUE/COST (Php)</th>
+                <td style="width: 30%;">SPECIES STOCKED</td>
+                <td style="width: 25%;">SOURCE</td>
+                <td style="width: 20%;">QUANTITY</td>
+                <td style="width: 25%;">VALUE/COST (Php)</td>
             </tr>
         </thead>
         <tbody>
