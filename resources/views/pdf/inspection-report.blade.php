@@ -111,15 +111,14 @@
             class="underline">{{ ucwords(strtolower($report->municipality ?? '_______________________')) }}</span>,
         Province of <span
             class="underline">{{ ucwords(strtolower($report->province ?? '__________________________')) }}</span>, and I
-        hereby certify that
-        the following are the kind and extent of improvements found existing in the area and production thereof.
+        hereby certify that the following are the kind and extent of improvements found existing in the area and production thereof.
     </p>
 
     <table class="lessee-info-table">
         <tr>
             <td>
                 <span>Name of Lessee/Applicant:</span>
-                <span style="">
+                <span style="border-bottom: 1px solid #000;">
                     {{ ucwords(strtolower($report->lessee->full_name ?? '___________________________________')) }}
                 </span>
             </td>
@@ -199,7 +198,7 @@
 
 
 
-
+ 
 
 
 
