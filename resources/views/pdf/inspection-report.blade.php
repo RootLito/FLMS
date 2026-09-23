@@ -42,17 +42,25 @@
         }
 
         table {
+            width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
             margin: 0;
             padding: 0;
         }
 
-        th,
+        th {
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            border: 1px solid #000 ;
+
+        }
+
         td {
             padding: 0;
             margin: 0;
-            border: none;
+            border: 1px solid #000;
         }
 
 
@@ -111,7 +119,8 @@
             class="underline">{{ ucwords(strtolower($report->municipality ?? '_______________________')) }}</span>,
         Province of <span
             class="underline">{{ ucwords(strtolower($report->province ?? '__________________________')) }}</span>, and I
-        hereby certify that the following are the kind and extent of improvements found existing in the area and production thereof.
+        hereby certify that the following are the kind and extent of improvements found existing in the area and
+        production thereof.
     </p>
 
     <table class="lessee-info-table">
@@ -180,42 +189,21 @@
         </tr>
     </table>
 
-    <p style="margin: 0">
-        <strong>
-            <span style="margin-right: 75px;">A. Kind and Extent of Improvements</span> 
-            <span style="width: 200px; margin-right: 75px;">Date Introduced</span> 
-            <span style="width: 200px;">Value/Cost (Php)</span>
-        </strong>
-    </p>
-    <p style="text-indent: 18px;">1. &nbsp;Clearings</p>
-    <p style="text-indent: 36px;">Area Cleared:</p>
-    <p style="text-indent: 36px;">Main Dike:</p>
-    <p style="text-indent: 36px;">Secondary Dikes:</p>
-
-
-
-
-
-
-
- 
-
-
-
     <table>
         <thead>
             <tr>
-                <th style="width: 50%; text-align: left;">A. Kind and Extent of Improvements</th>
-                <th style="width: 25%; text-align: left;">Date Introduced</th>
-                <th style="width: 25%; text-align: left;"></th>
+                <th width="50%" colspan="4">A. Kind and Extent of Improvements</th>
+                <th width="20%">Date Introduced</th>
+                <th width="10%" colspan="2"></th>
+                <th width="20%">Value/Cost (Php)</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
+            {{-- <tr>
                 <td></td>
                 <td colspan="3">Clearings:</td>
-            </tr>
-            <tr>
+            </tr> --}}
+            {{-- <tr>
                 <td>Area Cleared:<span
                         class="underline">{{ $report->improvements['area_cleared'] ?? '________________' }}</span> has.
                 </td>
@@ -323,7 +311,7 @@
                 <td><span
                         class="underline">{{ $report->financial_values['tax_declaration'] ?? '________________________' }}</span>
                 </td>
-            </tr>
+            </tr> --}}
         </tbody>
     </table>
 
