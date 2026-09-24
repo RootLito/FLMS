@@ -291,7 +291,7 @@ new class extends Component {
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1">
                             <flux:tooltip content="Send Message">
                                 <flux:button icon="envelope" icon:variant="outline" size="sm" variant="filled"
                                     wire:click="openMessageModal('{{ $lessee->id }}')" />
@@ -301,13 +301,13 @@ new class extends Component {
                                 <flux:button icon="ellipsis-horizontal" size="sm" variant="filled" />
 
                                 <flux:menu>
-                                    <flux:menu.item icon="eye" wire:click="showDetails('{{ $lessee->id }}')">View
+                                    <flux:menu.item icon="eye" icon:variant="outline" wire:click="showDetails('{{ $lessee->id }}')">View
                                         Details</flux:menu.item>
-                                    <flux:menu.item icon="pencil-square" wire:click="edit('{{ $lessee->id }}')">
+                                    <flux:menu.item icon="pencil-square" icon:variant="outline" wire:click="edit('{{ $lessee->id }}')">
                                         Edit Lessee
                                     </flux:menu.item>
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger"
+                                    <flux:menu.item icon="trash" icon:variant="outline" variant="danger"
                                         wire:click="confirmDelete('{{ $lessee->id }}')">
                                         Delete Record
                                     </flux:menu.item>

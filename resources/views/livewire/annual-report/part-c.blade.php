@@ -1,4 +1,4 @@
-@props(['formData', 'lessees'])
+@props(['formData', 'lessees', 'existingPhotos' => []])
 
 <div class="space-y-6" wire:key="c-documentation-root">
     <h2 class="text-lg font-bold text-zinc-800">C. Documentation and Authentication</h2>
@@ -15,7 +15,7 @@
             <div>
                 <p class="text-sm font-medium text-zinc-700">Representative Site Photo/s</p>
                 <div class="mt-2 p-4 border-dashed border-zinc-200 bg-zinc-50 shadow-sm rounded">
-                    <flux:input type="file" multiple accept="image/*" wire:model="formData.site_photos"/>
+                    <flux:input type="file" multiple accept="image/*" wire:model="formData.site_photos" />
                     <div wire:loading wire:target="formData.site_photos" class="text-xs text-zinc-500 mt-1">
                         Uploading site images...
                     </div>
@@ -25,35 +25,57 @@
             <div>
                 <p class="text-sm font-medium text-zinc-700">Preview</p>
                 <div
-                    class="flex flex-wrap gap-2 mt-2 p-2 border border-zinc-200 rounded-lg min-h-[80px] bg-white shadow-sm">
-                    @if (!empty($formData['site_photos']))
-                        <div class="grid grid-cols-4 gap-2 w-full">
-                            @foreach ($formData['site_photos'] as $index => $file)
-                                @php
-                                    try {
-                                        $url = $file->temporaryUrl();
-                                    } catch (\Exception $e) {
-                                        $url = null;
-                                    }
-                                @endphp
+                    class="flex flex-wrap gap-3 mt-2 p-3 border border-zinc-200 rounded-lg min-h-[90px] bg-white shadow-sm">
 
-                                @if ($url)
-                                    <div class="relative group h-16 w-16">
-                                        <img src="{{ $url }}"
-                                            class="h-full w-full object-cover rounded border border-zinc-300 shadow-sm" />
-                                        <button type="button" wire:click="removePhoto({{ $index }})"
-                                            class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-0.5 shadow hover:bg-red-700 transition-colors">
-                                            <flux:icon.x-mark class="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                @endif
-                            @endforeach
-                        </div>
-                    @else
+                    {{-- 1. EXISTING PHOTOS FROM DATABASE --}}
+                    @if (!empty($existingPhotos))
+                        @foreach ($existingPhotos as $index => $photoPath)
+                            <div class="relative group h-16 w-16">
+                                <img src="{{ Storage::url($photoPath) }}"
+                                    class="h-full w-full object-cover rounded border border-zinc-300 shadow-sm" />
+
+                                {{-- Remove Button for Existing Photo --}}
+                                <button type="button" wire:click="removeExistingPhoto({{ $index }})"
+                                    class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-0.5 shadow hover:bg-red-700 transition-colors">
+                                    <flux:icon.x-mark class="w-3 h-3" />
+                                </button>
+                            </div>
+                        @endforeach
+                    @endif
+
+                    {{-- 2. NEWLY UPLOADED TEMPORARY PHOTOS --}}
+                    @if (!empty($formData['site_photos']))
+                        @foreach ($formData['site_photos'] as $index => $file)
+                            @php
+                                try {
+                                    $url = $file->temporaryUrl();
+                                } catch (\Exception $e) {
+                                    $url = null;
+                                }
+                            @endphp
+
+                            @if ($url)
+                                <div class="relative group h-16 w-16">
+                                    <img src="{{ $url }}"
+                                        class="h-full w-full object-cover rounded border border-zinc-300 shadow-sm" />
+
+                                    {{-- Remove Button for New Photo --}}
+                                    <button type="button" wire:click="removePhoto({{ $index }})"
+                                        class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-0.5 shadow hover:bg-red-700 transition-colors">
+                                        <flux:icon.x-mark class="w-3 h-3" />
+                                    </button>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
+
+                    {{-- EMPTY STATE --}}
+                    @if (empty($existingPhotos) && empty($formData['site_photos']))
                         <div class="flex items-center justify-center w-full h-16">
                             <span class="text-xs text-zinc-400 italic">No files selected</span>
                         </div>
                     @endif
+
                 </div>
             </div>
         </div>

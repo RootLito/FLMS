@@ -82,10 +82,10 @@ new class extends Component {
         <flux:table.columns>
             <flux:table.column sticky sortable :direction="$sortField === 'fla_no' ? $sortDirection : null"
                 wire:click="sortBy('fla_no')">Lessee / FLA</flux:table.column>
-            <flux:table.column>Coverage Period</flux:table.column>
-            <flux:table.column>Location</flux:table.column>
             <flux:table.column sortable :direction="$sortField === 'created_at' ? $sortDirection : null"
                 wire:click="sortBy('created_at')">Date Generate</flux:table.column>
+            <flux:table.column>Location</flux:table.column>
+            <flux:table.column>Coverage Period</flux:table.column>
             <flux:table.column class="w-px whitespace-nowrap">Actions</flux:table.column>
         </flux:table.columns>
 
@@ -105,7 +105,7 @@ new class extends Component {
 
                     <flux:table.cell>
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                            {{ $report->from }} - {{ $report->to }}
+                            {{ $report->updated_at > $report->created_at ? $report->updated_at->format('M d, Y h:i:s A') . ' (Updated)' : $report->created_at->format('M d, Y h:i:s A') }}
                         </span>
                     </flux:table.cell>
 
@@ -119,20 +119,32 @@ new class extends Component {
 
                     <flux:table.cell>
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                            {{ $report->created_at?->format('M d, Y h:i:s A') }}
+                            {{ $report->from }} - {{ $report->to }}
                         </span>
                     </flux:table.cell>
 
-                    <flux:table.cell>
+
+
+                    {{-- <flux:table.cell>
+                        <span class="text-sm text-zinc-700 dark:text-zinc-300">
+                            {{ $report->created_at?->format('M d, Y h:i:s A') }}
+                        </span>
+                    </flux:table.cell> --}}
+
+
+                    {{-- <flux:table.cell>
                         <div class="flex items-center gap-2">
                             <flux:dropdown>
                                 <flux:button icon="ellipsis-horizontal" size="sm" />
 
                                 <flux:menu>
                                     <flux:menu.item icon="eye">View Submission</flux:menu.item>
-                                    <flux:menu.item icon="pencil-square" wire:click="edit('{{ $report->id }}')">
+                                    <flux:menu.item icon="pencil-square"
+                                        :href="route('annual.edit', ['report' => $report->id])">
                                         Edit Report
                                     </flux:menu.item>
+
+
                                     <flux:menu.separator />
                                     <flux:menu.item icon="trash" variant="danger"
                                         wire:click="confirmDelete('{{ $report->id }}')">
@@ -141,6 +153,14 @@ new class extends Component {
                                 </flux:menu>
                             </flux:dropdown>
                         </div>
+                    </flux:table.cell> --}}
+                    <flux:table.cell class="text-right flex items-center gap-1 justify-end">
+                        <flux:button icon="eye" icon:variant="outline" size="sm" variant="filled"
+                            tooltip="View" />
+                        <flux:button :href="route('annual.edit', ['report' => $report->id])" icon="pencil-square"
+                            size="sm" variant="filled" icon:variant="outline" tooltip="Update" />
+                        <flux:button wire:click="confirmDelete('{{ $report->id }}')" icon="trash"
+                            icon:variant="outline" size="sm" variant="filled" tooltip="Delete" color="red" />
                     </flux:table.cell>
                 </flux:table.row>
             @empty
@@ -168,8 +188,7 @@ new class extends Component {
         <div class="space-y-6">
             <div>
                 <flux:heading size="lg">Confirm Deletion</flux:heading>
-                <flux:text class="mt-2 text-red-500">Warning: This action will permanently remove this annual report
-                    entry.</flux:text>
+                <flux:text class="mt-2 text-red-500">Warning: This action is permanent.</flux:text>
             </div>
 
             <flux:text>To confirm, please type the FLA NO: <span

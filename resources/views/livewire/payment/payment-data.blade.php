@@ -265,12 +265,10 @@ new class extends Component {
                     <flux:table.cell>
                         <div class="flex items-center gap-1">
                             <flux:button icon="pencil-square" size="sm" variant="filled"
-                                wire:click="edit({{ $payment->id }})"
-                                class="text-sky-500 hover:text-sky-600 dark:text-sky-400 dark:hover:text-sky-300" />
+                                wire:click="edit({{ $payment->id }})" icon:variant="outline"/>
 
                             <flux:button icon="trash" size="sm" variant="filled"
-                                wire:click="confirmDelete({{ $payment->id }})"
-                                class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300">
+                                wire:click="confirmDelete({{ $payment->id }})" icon:variant="outline" color="red">
                             </flux:button>
                         </div>
                     </flux:table.cell>

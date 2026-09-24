@@ -11,7 +11,7 @@ new class extends Component {
 
     public $search = '';
     public $sortField = 'fla_no';
-    public $sortDirection = 'asc';
+    public $sortDirection = 'desc';
 
     public $editingReportId = null;
     public $lessee_id;
@@ -186,7 +186,8 @@ new class extends Component {
 <div class="w-full">
     <div class="mb-8 w-full flex gap-2">
         <div class="w-120">
-            <flux:input wire:model.live="search" icon="magnifying-glass" placeholder="Search reports by FLA or Lessee..." />
+            <flux:input wire:model.live="search" icon="magnifying-glass"
+                placeholder="Search reports by FLA or Lessee..." />
         </div>
 
         <flux:spacer />
@@ -220,9 +221,14 @@ new class extends Component {
                         </div>
                     </flux:table.cell>
 
-                    <flux:table.cell>
+                    {{-- <flux:table.cell>
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">
                             {{ $report->created_at?->format('M d, Y h:i:s A') }}
+                        </span>
+                    </flux:table.cell> --}}
+                    <flux:table.cell>
+                        <span class="text-sm text-zinc-700 dark:text-zinc-300">
+                            {{ $report->updated_at > $report->created_at ? $report->updated_at->format('M d, Y h:i:s A') . ' (Updated)' : $report->created_at->format('M d, Y h:i:s A') }}
                         </span>
                     </flux:table.cell>
 
@@ -238,28 +244,35 @@ new class extends Component {
                         <span class="text-xs text-zinc-500 line-clamp-1">{{ $report->remarks ?? 'No remarks' }}</span>
                     </flux:table.cell>
 
-                    <flux:table.cell>
+                    {{-- <flux:table.cell>
                         <div class="flex items-center gap-2">
                             <flux:dropdown>
                                 <flux:button icon="ellipsis-horizontal" size="sm" />
 
                                 <flux:menu>
-                                    <flux:menu.item icon="eye" :href="route('inspection.pdf', $report->id)"
-                                        target="_blank">
+                                    <flux:menu.item icon="eye">
                                         View Report
                                     </flux:menu.item>
-                                    <flux:menu.item icon="pencil-square"
-                                        :href="route('inspection.edit', ['report' => $report->id])">
+                                    <flux:menu.item icon="pencil-square">
                                         Edit Report
                                     </flux:menu.item>
                                     <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger"
-                                        wire:click="confirmDelete('{{ $report->id }}')">
+                                    <flux:menu.item icon="trash" variant="danger">
                                         Delete Report
                                     </flux:menu.item>
                                 </flux:menu>
                             </flux:dropdown>
                         </div>
+                    </flux:table.cell> --}}
+
+
+                    <flux:table.cell class="text-right flex items-center gap-1 justify-end">
+                        <flux:button :href="route('inspection.pdf', $report->id)" target="_blank" icon="eye"
+                            icon:variant="outline" size="sm" variant="filled" tooltip="View" />
+                        <flux:button :href="route('inspection.edit', ['report' => $report->id])" icon="pencil-square"
+                            icon:variant="outline" size="sm" variant="filled" tooltip="Update" />
+                        <flux:button wire:click="confirmDelete('{{ $report->id }}')" icon="trash"
+                            icon:variant="outline" size="sm" variant="filled" tooltip="Delete" color="red" />
                     </flux:table.cell>
                 </flux:table.row>
             @empty

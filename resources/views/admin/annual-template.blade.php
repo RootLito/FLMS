@@ -7,8 +7,7 @@
                 </flux:button>
             </div>
 
-            <flux:heading size="xl" level="1" class="w-full text-center">Report of Inspection and Verification of
-                Improvements</flux:heading>
+            <flux:heading size="xl" level="1" class="w-full text-center">ANNUAL REPORT ON FISHPOND DEVELOPMENT, OPERATION & PRODUCTION</flux:heading>
         </div>
 
         <livewire:annual-report.multi-step-form />

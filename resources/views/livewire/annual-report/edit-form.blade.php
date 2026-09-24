@@ -1,13 +1,15 @@
 <?php
 
-use function Livewire\Volt\{state, computed, usesFileUploads};
+use function Livewire\Volt\{state, computed, usesFileUploads, mount};
 use App\Models\AnnualReport;
 use App\Models\Lessee;
+use Illuminate\Support\Facades\Storage;
 use Flux\Flux;
 
 usesFileUploads();
 
 state([
+    'reportId' => null,
     'step' => 1,
     'totalSteps' => 6,
     'stepsInfo' => [
@@ -18,110 +20,49 @@ state([
         5 => ['letter' => 'b3', 'title' => 'Marketing Records'],
         6 => ['letter' => 'c', 'title' => 'Documentation & Authentication'],
     ],
-    'formData' => [
-        'lessee_id' => '',
-        'report_year_from' => '',
-        'report_year_to' => '',
-        'fla_no' => '',
-        'location' => '',
-        'date_issued' => '',
-        'expiry_date' => '',
-        'area_granted' => '',
-        'area_developed' => '',
-        'pond_breakdown' => [
-            'nursery' => '',
-            'transition' => '',
-            'rearing' => '',
-        ],
-        'area_undeveloped' => '',
-
-        'improvements' => [
-            'clearings_area' => '',
-            'clearings_date' => '',
-            'clearings_cost' => '',
-            'dike_main' => '',
-            'dike_main_date' => '',
-            'dike_main_cost' => '',
-            'dike_secondary' => '',
-            'dike_secondary_date' => '',
-            'dike_secondary_cost' => '',
-            'excavation' => '',
-            'excavation_date' => '',
-            'excavation_cost' => '',
-            'gate_concrete' => '',
-            'gate_concrete_date' => '',
-            'gate_concrete_cost' => '',
-            'gate_wooden' => '',
-            'gate_wooden_date' => '',
-            'gate_wooden_cost' => '',
-            'building_desc' => '',
-            'building_date' => '',
-            'building_cost' => '',
-            'equipment_desc' => '',
-            'equipment_date' => '',
-            'equipment_cost' => '',
-        ],
-        'financial' => [
-            'total_value' => '',
-            'actual_appraisal' => '',
-            'tax_declaration' => '',
-        ],
-        'workers' => [
-            'caretakers' => '',
-            'laborers' => '',
-        ],
-
-        'stocking' => [
-            'bangus' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fry' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fingerlings' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'sugpo' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'shrimp' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'custom_rows' => [],
-        ],
-
-        'harvesting' => [
-            'bangus' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'sugpo' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'shrimp' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'custom_rows' => [],
-        ],
-
-        'marketing' => [
-            'bangus' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'sugpo' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'shrimp' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'custom_rows' => [],
-        ],
-
-        'remarks' => '',
-        'site_photos' => [],
-        'signature_data' => '',
-    ],
+    'formData' => [],
+    'existingPhotos' => [],
 ]);
 
-$updatedFormDataLesseeId = function ($value) {
-    if (empty($value)) {
-        $this->formData['fla_no'] = '';
-        $this->formData['location'] = '';
-        $this->formData['date_issued'] = '';
-        $this->formData['expiry_date'] = '';
-        $this->formData['area_granted'] = '';
-        $this->formData['area_developed'] = '';
-        $this->formData['area_undeveloped'] = '';
-        return;
-    }
+mount(function ($reportId) {
+    $report = AnnualReport::findOrFail($reportId);
 
-    if ($lessee = Lessee::find($value)) {
-        $this->formData['fla_no'] = $lessee->fla_no ?? '';
-        $this->formData['location'] = implode(', ', array_filter([$lessee->barangay, $lessee->municipality, $lessee->province]));
-        $this->formData['date_issued'] = $lessee->date_issued?->format('Y-m-d') ?? '';
-        $this->formData['expiry_date'] = $lessee->date_expiration?->format('Y-m-d') ?? '';
-        $this->formData['area_granted'] = $lessee->hec_granted ?? '';
-        $this->formData['area_developed'] = $lessee->hec_developed ?? '';
-        $this->formData['area_undeveloped'] = $lessee->hec_undeveloped ?? '';
-    }
-};
+    $this->reportId = $report->id;
+
+    $locationParts = array_filter([$report->barangay, $report->municipality, $report->province]);
+
+    $items = is_object($report->items) ? $report->items->toArray() : $report->items ?? [];
+
+    $this->formData = [
+        'lessee_id' => $report->lessee_id ?? '',
+        'report_year_from' => $report->from?->format('Y-m-d') ?? '',
+        'report_year_to' => $report->to?->format('Y-m-d') ?? '',
+        'fla_no' => $report->fla_no ?? '',
+        'location' => implode(', ', $locationParts),
+        'date_issued' => $report->date_issued?->format('Y-m-d') ?? '',
+        'expiry_date' => $report->date_expire?->format('Y-m-d') ?? '',
+        'area_granted' => $report->no_hec_granted ?? '',
+        'area_developed' => $report->no_hec_developed ?? '',
+        'pond_breakdown' => $items['pond_breakdown'] ?? ['nursery' => '', 'transition' => '', 'rearing' => ''],
+        'area_undeveloped' => $report->no_hect_undeveloped ?? '',
+
+        'improvements' => $items['improvements'] ?? [],
+        'financial' => $items['financial'] ?? ['total_value' => '', 'actual_appraisal' => '', 'tax_declaration' => ''],
+        'workers' => $items['workers'] ?? ['caretakers' => '', 'laborers' => ''],
+
+        'stocking' => is_object($report->stocking) ? $report->stocking->toArray() : $report->stocking ?? [],
+        'harvesting' => is_object($report->harvesting) ? $report->harvesting->toArray() : $report->harvesting ?? [],
+        'marketing' => is_object($report->marketing) ? $report->marketing->toArray() : $report->marketing ?? [],
+
+        'remarks' => $report->remarks ?? '',
+        'site_photos' => [],
+        'signature_data' => $report->signature_data ?? '',
+    ];
+
+    // dd($this->formData);
+
+    $this->existingPhotos = is_object($report->site_photos) ? $report->site_photos->toArray() : $report->site_photos ?? [];
+});
 
 $lessees = computed(fn() => Lessee::orderBy('full_name')->get());
 
@@ -137,28 +78,34 @@ $previousStep = function () {
     }
 };
 
+$removeExistingPhoto = function ($index) {
+    if (isset($this->existingPhotos[$index])) {
+        Storage::disk('public')->delete($this->existingPhotos[$index]);
+        unset($this->existingPhotos[$index]);
+        $this->existingPhotos = array_values($this->existingPhotos);
+    }
+};
+
 $removePhoto = function ($index) {
     if (isset($this->formData['site_photos'][$index])) {
-        array_splice($this->formData['site_photos'], $index, 1);
+        unset($this->formData['site_photos'][$index]);
+        $this->formData['site_photos'] = array_values($this->formData['site_photos']);
     }
 };
 
 $submit = function () {
-    if (empty($this->formData['lessee_id'])) {
-        Flux::toast(variant: 'warning', heading: 'Error', text: 'Please select a Lessee.');
-        return;
-    }
-
     if (empty($this->formData['signature_data'])) {
         Flux::toast(variant: 'warning', heading: 'Error', text: 'Lessee signature verification is required.');
         return;
     }
 
-    Flux::modal('confirm-save-modal')->show();
+    Flux::modal('confirm-update-modal')->show();
 };
 
 $confirmSubmit = function () {
-    $savedPhotoPaths = [];
+    $report = AnnualReport::findOrFail($this->reportId);
+
+    $savedPhotoPaths = $this->existingPhotos;
     if (!empty($this->formData['site_photos'])) {
         foreach ($this->formData['site_photos'] as $photoFile) {
             if (method_exists($photoFile, 'store')) {
@@ -179,7 +126,7 @@ $confirmSubmit = function () {
         'workers' => $this->formData['workers'],
     ];
 
-    AnnualReport::create([
+    $report->update([
         'lessee_id' => $this->formData['lessee_id'],
         'from' => $this->formData['report_year_from'] ?: null,
         'to' => $this->formData['report_year_to'] ?: null,
@@ -201,75 +148,8 @@ $confirmSubmit = function () {
         'signature_data' => $this->formData['signature_data'],
     ]);
 
-    $this->reset('step');
-    $this->formData = [
-        'lessee_id' => '',
-        'report_year_from' => '',
-        'report_year_to' => '',
-        'fla_no' => '',
-        'location' => '',
-        'date_issued' => '',
-        'expiry_date' => '',
-        'area_granted' => '',
-        'area_developed' => '',
-        'area_undeveloped' => '',
-        'pond_breakdown' => ['nursery' => '', 'transition' => '', 'rearing' => ''],
-        'improvements' => [
-            'clearings_area' => '',
-            'clearings_date' => '',
-            'clearings_cost' => '',
-            'dike_main' => '',
-            'dike_main_date' => '',
-            'dike_main_cost' => '',
-            'dike_secondary' => '',
-            'dike_secondary_date' => '',
-            'dike_secondary_cost' => '',
-            'excavation' => '',
-            'excavation_date' => '',
-            'excavation_cost' => '',
-            'gate_concrete' => '',
-            'gate_concrete_date' => '',
-            'gate_concrete_cost' => '',
-            'gate_wooden' => '',
-            'gate_wooden_date' => '',
-            'gate_wooden_cost' => '',
-            'building_desc' => '',
-            'building_date' => '',
-            'building_cost' => '',
-            'equipment_desc' => '',
-            'equipment_date' => '',
-            'equipment_cost' => '',
-        ],
-        'financial' => ['total_value' => '', 'actual_appraisal' => '', 'tax_declaration' => ''],
-        'workers' => ['caretakers' => '', 'laborers' => ''],
-        'stocking' => [
-            'bangus' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fry' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fingerlings' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'sugpo' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'shrimp' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'custom_rows' => [],
-        ],
-        'harvesting' => [
-            'bangus' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'sugpo' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'shrimp' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'custom_rows' => [],
-        ],
-        'marketing' => [
-            'bangus' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'sugpo' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'shrimp' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'custom_rows' => [],
-        ],
-        'remarks' => '',
-        'site_photos' => [],
-        'signature_data' => '',
-    ];
+    Flux::toast(variant: 'success', heading: 'Updated', text: 'Annual Report updated successfully!');
 
-    Flux::toast(variant: 'success', heading: 'Submitted', text: 'Annual Report saved successfully!');
-    $this->modal('confirm-save-modal')->close();
-    // $this->step = 1;
     return redirect()->route('annual.report');
 };
 ?>
@@ -329,7 +209,7 @@ $confirmSubmit = function () {
     <div class="p-8 flex-1 overflow-y-auto">
         @if ($step === 1)
             <div wire:key="step-1-container">
-                <x-annual-report.initial :formData="$formData" :lessees="$this->lessees" />
+                <x-annual-report.initial :formData="$formData" :lessees="$this->lessees" :isEdit="true" />
             </div>
         @elseif ($step === 2)
             <div wire:key="step-2-container">
@@ -349,7 +229,7 @@ $confirmSubmit = function () {
             </div>
         @elseif ($step === 6)
             <div wire:key="step-6-container">
-                <x-annual-report.part-c :formData="$formData" :lessees="$this->lessees" />
+                <x-annual-report.part-c :formData="$formData" :lessees="$this->lessees" :existingPhotos="$existingPhotos" />
             </div>
         @endif
     </div>
@@ -365,7 +245,7 @@ $confirmSubmit = function () {
         </flux:text>
         @if ($step === $totalSteps)
             <flux:button variant="primary" color="emerald" icon-trailing="check" wire:click="submit">
-                Submit
+                Update Report
             </flux:button>
         @else
             <flux:button variant="primary" color="emerald" icon-trailing="chevron-right" wire:click="nextStep">
@@ -374,12 +254,11 @@ $confirmSubmit = function () {
         @endif
     </div>
 
-    <flux:modal name="confirm-save-modal" class="md:max-w-lg">
+    <flux:modal name="confirm-update-modal" class="md:max-w-lg">
         <div class="space-y-6">
             <div>
-                <flux:heading size="lg">Submit Annual Report?</flux:heading>
-                <flux:subheading>Please make sure all data collected across sections is accurate before finalizing.
-                </flux:subheading>
+                <flux:heading size="lg">Confirm Update</flux:heading>
+                <flux:subheading>Are you sure you want to save changes to this annual report?</flux:subheading>
             </div>
 
             <div class="flex space-x-2 justify-end">
@@ -391,7 +270,7 @@ $confirmSubmit = function () {
 
                 <flux:button variant="primary" color="emerald" wire:click="confirmSubmit" wire:loading.attr="disabled"
                     wire:target="confirmSubmit">
-                    Confirm & Save
+                    Save Changes
                 </flux:button>
             </div>
         </div>

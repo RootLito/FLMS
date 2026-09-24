@@ -39,6 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('annual-reports')->name('annual.')->group(function () {
         Route::view('/', 'admin.annual')->name('report');
         Route::view('/annual-template', 'admin.annual-template')->name('template');
+        Route::get('/{report}/edit', function (App\Models\AnnualReport $report) {
+            return view('admin.annual-edit', ['reportId' => $report->id]);
+        })->name('edit');
     });
 
     // Settings

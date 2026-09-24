@@ -1,4 +1,4 @@
-@props(['formData', 'lessees'])
+@props(['formData', 'lessees', 'isEdit' => false])
 
 <div class="space-y-6">
     <div>
@@ -14,7 +14,7 @@
                 <label for="lessee" class="mb-2">Lessee</label>
 
                 <flux:dropdown>
-                    <flux:button class="w-full" align="start" >
+                    <flux:button class="w-full" align="start" :disabled="$isEdit">
                         {{ $lessees->firstWhere('id', $formData['lessee_id'])->full_name ?? 'Select Lessee' }}
                     </flux:button>
 

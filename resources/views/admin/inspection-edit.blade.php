@@ -7,10 +7,9 @@
                 </flux:button>
             </div>
 
-            <flux:heading size="xl" level="1" class="w-full text-center">Report of Inspection and Verification of
-                Improvements</flux:heading>
+            <flux:heading size="xl" level="1" class="w-full text-center">UPDATE - REPORT OF INSPECTION AND VERIFICATION OF IMPROVEMENTS</flux:heading>
         </div>
 
-        <livewire:inspection.edit-form :reportId="$reportId" />
+        <livewire:inspection.edit-form :reportId="$reportId"/>
     </div>
 </x-layouts.app>

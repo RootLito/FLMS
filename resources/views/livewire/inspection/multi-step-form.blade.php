@@ -361,7 +361,8 @@ $submit = function () {
 
     Flux::toast(variant: 'success', heading: 'Submitted', text: 'Annual Report saved successfully!');
     $this->modal('confirm-submit')->close();
-    $this->step = 1;
+    // $this->step = 1;
+    return redirect()->route('inspection.report');
 };
 
 ?>

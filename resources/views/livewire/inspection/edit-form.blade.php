@@ -183,7 +183,6 @@ $submit = function () {
         'designation' => $this->formData['designation'] ?? '',
     ];
 
-    // dd($updatedData);
 
     $report->update($updatedData);
 
@@ -282,7 +281,7 @@ $removePhoto = function ($index) {
     <div class="p-8 flex-1 overflow-y-auto">
         @if ($step === 1)
             <div wire:key="step-view-1">
-                <x-inspection.initial :formData="$formData" :lessees="$this->lessees" />
+                <x-inspection.initial :formData="$formData" :lessees="$this->lessees" :isEdit="true" />
             </div>
         @elseif ($step === 2)
             <div wire:key="step-view-2">

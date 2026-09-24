@@ -1,4 +1,4 @@
-@props(['formData', 'lessees'])
+@props(['formData', 'lessees', 'isEdit' => false])
 
 <div class="space-y-6">
     <div>
@@ -14,18 +14,20 @@
                 <label for="lessee" class="text-sm font-medium text-zinc-700 mb-2">Name of Lessee/Applicant</label>
 
                 <flux:dropdown>
-                    <flux:button class="w-full" align="start">
+                    <flux:button class="w-full" align="start" :disabled="$isEdit">
                         {{ $lessees->firstWhere('id', $formData['lessee_id'])->full_name ?? 'Select Lessee' }}
                     </flux:button>
 
-                    <flux:menu class="w-[var(--flux-dropdown-width)]">
-                        @foreach ($lessees as $lessee)
-                            <flux:menu.item wire:click="$set('formData.lessee_id', {{ $lessee->id }})"
-                                :wire:key="$lessee->id">
-                                {{ $lessee->full_name }}
-                            </flux:menu.item>
-                        @endforeach
-                    </flux:menu>
+                    @unless ($isEdit)
+                        <flux:menu class="w-[var(--flux-dropdown-width)]">
+                            @foreach ($lessees as $lessee)
+                                <flux:menu.item wire:click="$set('formData.lessee_id', {{ $lessee->id }})"
+                                    :wire:key="$lessee->id">
+                                    {{ $lessee->full_name }}
+                                </flux:menu.item>
+                            @endforeach
+                        </flux:menu>
+                    @endunless
                 </flux:dropdown>
             </div>
 
