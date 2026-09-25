@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Creagia\LaravelSignPad\Concerns\RequiresSignature;
 use Creagia\LaravelSignPad\Contracts\CanBeSigned;
 
@@ -14,8 +13,6 @@ class InspectionReport extends Model implements CanBeSigned
 
     protected $fillable = [
         'lessee_id',
-        'from',
-        'to',
         'fla_no',
         'barangay',
         'municipality',
@@ -26,50 +23,30 @@ class InspectionReport extends Model implements CanBeSigned
         'no_hec_granted',
         'no_hec_developed',
         'no_hect_undeveloped',
-        'items',
-        'stocking',
-        'harvesting',
-        'marketing',
-        'site_photos',
-        'signature_data',
-        'improvements',
-        'financial_values',
-        'stocking_records',
-        'harvest_records',
-        'pond_types',
-        'with_pending_admin_case',
-        'with_pending_judicial_case',
-        'admin_case_details',
-        'judicial_case_details',
-        'remarks_recommendation',
-        'inspecting_officer',
+        'improvement',
+        'att_photos',
+        'operation',
+        'verification',
+        'case_status',
+        'remarks',
+        'officer',
         'designation',
+        'site_photos',
     ];
 
     protected $casts = [
-        'from' => 'date',
-        'to' => 'date',
         'date_issued' => 'date',
         'date_expire' => 'date',
         'date_inspection' => 'date',
         'no_hec_granted' => 'decimal:2',
         'no_hec_developed' => 'decimal:2',
         'no_hect_undeveloped' => 'decimal:2',
-        'items' => 'array',
-        'stocking' => 'array',
-        'harvesting' => 'array',
-        'marketing' => 'array',
+        'improvement' => 'array',
+        'att_photos' => 'array',
+        'operation' => 'array',
+        'verification' => 'array',
+        'case_status' => 'array',
         'site_photos' => 'array',
-
-        'improvements' => 'array',
-        'financial_values' => 'array',
-        'stocking_records' => 'array',
-        'harvest_records' => 'array',
-        'pond_types' => 'array',
-
-        'with_pending_admin_case' => 'boolean',
-        'with_pending_judicial_case' => 'boolean',
-        'signature_data' => 'string',
     ];
 
     public function lessee(): BelongsTo

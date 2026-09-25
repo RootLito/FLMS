@@ -6,33 +6,39 @@
 
     <div class="flex flex-col gap-y-4 mb-4">
         <div class="w-1/2">
-            <flux:checkbox label="Nursery:" class="mb-1" wire:model.live="formData.pond_types.nursery" />
-            <flux:input placeholder="(Has.)" size="sm" :disabled="!$formData['pond_types']['nursery']"
-                wire:model="formData.pond_types.nursery_has" />
+            <flux:checkbox label="Nursery:" class="mb-1" wire:model.live="formData.verification.pond_types.nursery" />
+            <flux:input placeholder="(Has.)" size="sm"
+                :disabled="!$formData['verification']['pond_types']['nursery']"
+                wire:model="formData.verification.pond_types.nursery_has" />
         </div>
 
         <div class="w-1/2">
-            <flux:checkbox label="Transition:" class="mb-1" wire:model.live="formData.pond_types.transition" />
-            <flux:input placeholder="(Has.)" size="sm" :disabled="!$formData['pond_types']['transition']"
-                wire:model="formData.pond_types.transition_has" />
+            <flux:checkbox label="Transition:" class="mb-1"
+                wire:model.live="formData.verification.pond_types.transition" />
+            <flux:input placeholder="(Has.)" size="sm"
+                :disabled="!$formData['verification']['pond_types']['transition']"
+                wire:model="formData.verification.pond_types.transition_has" />
         </div>
 
         <div class="w-1/2">
-            <flux:checkbox label="Rearing:" class="mb-1" wire:model.live="formData.pond_types.rearing" />
-            <flux:input placeholder="(Has.)" size="sm" :disabled="!$formData['pond_types']['rearing']"
-                wire:model="formData.pond_types.rearing_has" />
+            <flux:checkbox label="Rearing:" class="mb-1" wire:model.live="formData.verification.pond_types.rearing" />
+            <flux:input placeholder="(Has.)" size="sm"
+                :disabled="!$formData['verification']['pond_types']['rearing']"
+                wire:model="formData.verification.pond_types.rearing_has" />
         </div>
 
         <div class="w-1/2">
-            <flux:checkbox label="Canal:" class="mb-1" wire:model.live="formData.pond_types.canal" />
-            <flux:input placeholder="(Has.)" size="sm" :disabled="!$formData['pond_types']['canal']"
-                wire:model="formData.pond_types.canal_has" />
+            <flux:checkbox label="Canal:" class="mb-1" wire:model.live="formData.verification.pond_types.canal" />
+            <flux:input placeholder="(Has.)" size="sm"
+                :disabled="!$formData['verification']['pond_types']['canal']"
+                wire:model="formData.verification.pond_types.canal_has" />
         </div>
 
         <div class="w-1/2">
-            <flux:checkbox label="Others:" class="mb-1" wire:model.live="formData.pond_types.others" />
-            <flux:input placeholder="(Has.)" size="sm" :disabled="!$formData['pond_types']['others']"
-                wire:model="formData.pond_types.others_has" />
+            <flux:checkbox label="Others:" class="mb-1" wire:model.live="formData.verification.pond_types.others" />
+            <flux:input placeholder="(Has.)" size="sm"
+                :disabled="!$formData['verification']['pond_types']['others']"
+                wire:model="formData.verification.pond_types.others_has" />
         </div>
     </div>
 </div>

@@ -7,22 +7,24 @@
     <div class="flex flex-col gap-y-4 mb-4">
         <div class="w-1/2">
             <p class="text-sm font-medium text-zinc-700 mb-2">1. With pending administrative case</p>
-            <flux:radio.group wire:model.live="formData.admin_case" class="mb-4">
+            <flux:radio.group wire:model.live="formData.case_status.admin_case" class="mb-4">
                 <flux:radio label="Yes" value="Yes" />
                 <flux:radio label="No" value="No" />
             </flux:radio.group>
-            <flux:textarea placeholder="Details..." :disabled="($formData['admin_case'] ?? 'No') !== 'Yes'"
-                wire:model="formData.admin_details" />
+            <flux:textarea placeholder="Details..."
+                :disabled="($formData['case_status']['admin_case'] ?? 'No') !== 'Yes'"
+                wire:model="formData.case_status.admin_details" />
         </div>
 
         <div class="w-1/2">
             <p class="text-sm font-medium text-zinc-700 mb-2">2. With pending judicial case</p>
-            <flux:radio.group wire:model.live="formData.judicial_case" class="mb-4">
+            <flux:radio.group wire:model.live="formData.case_status.judicial_case" class="mb-4">
                 <flux:radio label="Yes" value="Yes" />
                 <flux:radio label="No" value="No" />
             </flux:radio.group>
-            <flux:textarea placeholder="Details..." :disabled="($formData['judicial_case'] ?? 'No') !== 'Yes'"
-                wire:model="formData.judicial_details" />
+            <flux:textarea placeholder="Details..."
+                :disabled="($formData['case_status']['judicial_case'] ?? 'No') !== 'Yes'"
+                wire:model="formData.case_status.judicial_details" />
         </div>
     </div>
 </div>

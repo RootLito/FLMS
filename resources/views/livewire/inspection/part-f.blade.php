@@ -92,7 +92,7 @@
                             this.ctx.lineWidth = 2.5;
                             this.ctx.lineCap = 'round';
                     
-                            let existingSig = @js($formData['signature_data'] ?? '');
+                            let existingSig = @js($formData['documentation']['signature_data'] ?? '');
                             if (existingSig) {
                                 const img = new Image();
                                 img.onload = () => this.ctx.drawImage(img, 0, 0);
@@ -107,7 +107,7 @@
                             this.ctx.lineWidth = 2.5;
                             this.ctx.lineCap = 'round';
                     
-                            let existingSig = @js($formData['signature_data'] ?? '');
+                            let existingSig = @js($formData['documentation']['signature_data'] ?? '');
                             if (existingSig) {
                                 const img = new Image();
                                 img.onload = () => this.ctx.drawImage(img, 0, 0);
@@ -139,11 +139,11 @@
                         stopDrawing() {
                             if (!this.isDrawing) return;
                             this.isDrawing = false;
-                            @this.set('formData.signature_data', this.canvas.toDataURL());
+                            @this.set('formData.documentation.signature_data', this.canvas.toDataURL());
                         },
                         clearCanvas() {
                             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                            @this.set('formData.signature_data', '');
+                            @this.set('formData.documentation.signature_data', '');
                         }
                     }"
                         @signature-saved.window="clearCanvas()">
@@ -165,12 +165,12 @@
                 </div>
 
                 <div>
-                    <flux:input wire:model="formData.officer_name" label="Full Name (Printed)"
+                    <flux:input wire:model="formData.documentation.officer_name" label="Full Name (Printed)"
                         placeholder="e.g. JUAN DELA CRUZ" />
                 </div>
 
                 <div>
-                    <flux:input wire:model="formData.designation" label="Designation" />
+                    <flux:input wire:model="formData.documentation.designation" label="Designation" />
                 </div>
             </div>
         </div>

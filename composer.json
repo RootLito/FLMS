@@ -17,6 +17,7 @@
         "livewire/flux": "^2.0",
         "livewire/volt": "^1.6.7",
         "paymongo/paymongo-php": "^0.0.0",
+        "setasign/fpdf": "^1.9",
         "spatie/browsershot": "^5.4",
         "spatie/laravel-pdf": "^2.13"
     },

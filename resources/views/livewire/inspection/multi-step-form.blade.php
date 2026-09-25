@@ -1,6 +1,6 @@
 <?php
 
-use function Livewire\Volt\{state, computed, usesFileUploads, updated};
+use function Livewire\Volt\{state, computed, usesFileUploads};
 use App\Models\InspectionReport;
 use App\Models\Lessee;
 use Illuminate\Support\Str;
@@ -16,26 +16,24 @@ state([
         1 => ['letter' => 'i', 'title' => 'Initial Details'],
         2 => ['letter' => 'a', 'title' => 'Kind and Extent of Improvements'],
         3 => ['letter' => 'b', 'title' => 'Operation and Production'],
-        4 => ['letter' => 'c', 'title' => 'Verification of Presence '],
+        4 => ['letter' => 'c', 'title' => 'Verification of Presence'],
         5 => ['letter' => 'd', 'title' => 'Case status of the area'],
         6 => ['letter' => 'e', 'title' => 'Remarks and Recommendation/s'],
         7 => ['letter' => 'f', 'title' => 'Signature and Photo'],
     ],
     'formData' => [
         'lessee_id' => '',
-        'report_year_from' => '',
-        'report_year_to' => '',
         'fla_no' => '',
         'barangay' => '',
         'municipality' => '',
         'province' => '',
         'date_issued' => '',
         'date_expire' => '',
+        'date_inspection' => '',
         'no_hec_granted' => '',
         'no_hec_developed' => '',
         'no_hect_undeveloped' => '',
-
-        'improvements' => [
+        'improvement' => [
             'clearings_area' => '',
             'clearings_date' => '',
             'clearings_cost' => '',
@@ -63,75 +61,51 @@ state([
             'permanent_workers' => '',
             'non_permanent_workers' => '',
             'fishr_registered' => '',
-        ],
-        'financial_values' => [
             'total_value' => '',
             'actual_appraisal' => '',
             'under_tax_declaration' => '',
         ],
-        'sss_proofs' => [],
-
-        'stocking_records' => [['species' => '', 'source' => '', 'quantity' => '', 'cost' => ''], ['species' => '', 'source' => '', 'quantity' => '', 'cost' => ''], ['species' => '', 'source' => '', 'quantity' => '', 'cost' => '']],
-        'harvest_records' => [
-            'date_stocking' => '',
-            'kilos_harvested' => '',
-            'date_harvest' => '',
-            'gross_sales' => '',
-            'market_domestic' => '',
-            'market_domestic_kilos' => '',
-            'market_export' => '',
-            'market_export_kilos' => '',
-        ],
-
-        'items' => [
+        'operation' => [
             'pond_breakdown' => ['nursery' => '', 'transition' => '', 'rearing' => ''],
             'workers' => ['caretakers' => '', 'laborers' => ''],
+            'stocking_records' => [['species' => '', 'source' => '', 'quantity' => '', 'cost' => ''], ['species' => '', 'source' => '', 'quantity' => '', 'cost' => ''], ['species' => '', 'source' => '', 'quantity' => '', 'cost' => '']],
+            'harvest_records' => [
+                'date_stocking' => '',
+                'kilos_harvested' => '',
+                'date_harvest' => '',
+                'gross_sales' => '',
+                'market_domestic' => '',
+                'market_domestic_kilos' => '',
+                'market_export' => '',
+                'market_export_kilos' => '',
+            ],
         ],
-        'stocking' => [
-            'bangus' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fry' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fingerlings' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'sugpo' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'shrimp' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'custom_rows' => [],
+        'verification' => [
+            'pond_types' => [
+                'nursery' => false,
+                'nursery_has' => '',
+                'transition' => false,
+                'transition_has' => '',
+                'rearing' => false,
+                'rearing_has' => '',
+                'canal' => false,
+                'canal_has' => '',
+                'others' => false,
+                'others_has' => '',
+            ],
         ],
-        'harvesting' => [
-            'bangus' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'sugpo' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'shrimp' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'custom_rows' => [],
-        ],
-        'marketing' => [
-            'bangus' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'sugpo' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'shrimp' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'custom_rows' => [],
-        ],
-
-        'pond_types' => [
-            'nursery' => false,
-            'nursery_has' => '',
-            'transition' => false,
-            'transition_has' => '',
-            'rearing' => false,
-            'rearing_has' => '',
-            'canal' => false,
-            'canal_has' => '',
-            'others' => false,
-            'others_has' => '',
-        ],
-        'cases' => [
+        'case_status' => [
             'admin_case' => 'No',
             'admin_details' => '',
             'judicial_case' => 'No',
             'judicial_details' => '',
         ],
-
         'remarks' => '',
-        'officer_name' => '',
-        'designation' => '',
         'signature_data' => '',
+        'officer' => '',
+        'designation' => '',
         'site_photos' => [],
+        'att_photos' => [],
     ],
 ]);
 
@@ -176,12 +150,6 @@ $previousStep = function () {
     }
 };
 
-$removePhoto = function ($index) {
-    if (isset($this->formData['site_photos'][$index])) {
-        array_splice($this->formData['site_photos'], $index, 1);
-    }
-};
-
 $submit = function () {
     if (empty($this->formData['lessee_id'])) {
         Flux::toast(variant: 'warning', heading: 'Lessee Required.', text: 'Please select a Lessee on Step 1 before submitting the report.');
@@ -189,49 +157,37 @@ $submit = function () {
     }
 
     $savedPhotoPaths = [];
-    if (!empty($this->formData['site_photos'])) {
-        foreach ($this->formData['site_photos'] as $photoFile) {
+    if (!empty($this->formData['att_photos'])) {
+        foreach ($this->formData['att_photos'] as $photoFile) {
             if (method_exists($photoFile, 'store')) {
-                $savedPhotoPaths[] = $photoFile->store('site_photos', 'public');
+                $savedPhotoPaths[] = $photoFile->store('att_photos', 'public');
             }
         }
     }
 
     $report = InspectionReport::create([
         'lessee_id' => $this->formData['lessee_id'],
-        'from' => $this->formData['report_year_from'] ?: null,
-        'to' => $this->formData['report_year_to'] ?: null,
         'fla_no' => $this->formData['fla_no'],
         'barangay' => $this->formData['barangay'],
         'municipality' => $this->formData['municipality'],
         'province' => $this->formData['province'],
         'date_issued' => $this->formData['date_issued'] ?: null,
         'date_expire' => $this->formData['date_expire'] ?: null,
+        'date_inspection' => $this->formData['date_inspection'] ?: now(),
         'no_hec_granted' => $this->formData['no_hec_granted'] ?: null,
         'no_hec_developed' => $this->formData['no_hec_developed'] ?: null,
         'no_hect_undeveloped' => $this->formData['no_hect_undeveloped'] ?: null,
 
-        'improvements' => $this->formData['improvements'],
-        'financial_values' => $this->formData['financial_values'],
-        'stocking_records' => $this->formData['stocking_records'],
-        'harvest_records' => $this->formData['harvest_records'],
-        'pond_types' => $this->formData['pond_types'],
+        'improvement' => $this->formData['improvement'],
+        'operation' => $this->formData['operation'],
+        'verification' => $this->formData['verification'],
+        'case_status' => $this->formData['case_status'],
 
-        'items' => $this->formData['items'],
-        'stocking' => $this->formData['stocking'],
-        'harvesting' => $this->formData['harvesting'],
-        'marketing' => $this->formData['marketing'],
-        'site_photos' => $savedPhotoPaths,
+        'remarks' => $this->formData['remarks'],
 
-        'with_pending_admin_case' => $this->formData['cases']['admin_case'] === 'Yes',
-        'admin_case_details' => $this->formData['cases']['admin_details'],
-        'with_pending_judicial_case' => $this->formData['cases']['judicial_case'] === 'Yes',
-        'judicial_case_details' => $this->formData['cases']['judicial_details'],
-
-        'remarks_recommendation' => $this->formData['remarks'],
-        'inspecting_officer' => $this->formData['officer_name'],
-        'designation' => $this->formData['designation'],
-        'date_inspection' => now(),
+        'officer' => $this->officer,
+        'designation' => $this->designation,
+        'att_photos' => $savedPhotoPaths,
     ]);
 
     if (!empty($this->formData['signature_data'])) {
@@ -250,118 +206,8 @@ $submit = function () {
         ]);
     }
 
-    $this->reset('step');
-    $this->formData = [
-        'lessee_id' => '',
-        'report_year_from' => '',
-        'report_year_to' => '',
-        'fla_no' => '',
-        'barangay' => '',
-        'municipality' => '',
-        'province' => '',
-        'date_issued' => '',
-        'date_expire' => '',
-        'no_hec_granted' => '',
-        'no_hec_developed' => '',
-        'no_hect_undeveloped' => '',
-        'improvements' => [
-            'clearings_area' => '',
-            'clearings_date' => '',
-            'clearings_cost' => '',
-            'main_dike_meters' => '',
-            'main_dike_date' => '',
-            'main_dike_cost' => '',
-            'secondary_dike_meters' => '',
-            'secondary_dike_date' => '',
-            'secondary_dike_cost' => '',
-            'excavation_cubic' => '',
-            'excavation_date' => '',
-            'excavation_cost' => '',
-            'gate_concrete' => '',
-            'gate_concrete_date' => '',
-            'gate_concrete_cost' => '',
-            'gate_wooden' => '',
-            'gate_wooden_date' => '',
-            'gate_wooden_cost' => '',
-            'house_desc' => '',
-            'house_date' => '',
-            'house_cost' => '',
-            'equipment_desc' => '',
-            'equipment_date' => '',
-            'equipment_cost' => '',
-            'permanent_workers' => '',
-            'non_permanent_workers' => '',
-            'fishr_registered' => '',
-        ],
-        'financial_values' => [
-            'total_value' => '',
-            'actual_appraisal' => '',
-            'under_tax_declaration' => '',
-        ],
-        'sss_proofs' => [],
-        'stocking_records' => [['species' => '', 'source' => '', 'quantity' => '', 'cost' => ''], ['species' => '', 'source' => '', 'quantity' => '', 'cost' => ''], ['species' => '', 'source' => '', 'quantity' => '', 'cost' => '']],
-        'harvest_records' => [
-            'date_stocking' => '',
-            'kilos_harvested' => '',
-            'date_harvest' => '',
-            'gross_sales' => '',
-            'market_domestic' => '',
-            'market_domestic_kilos' => '',
-            'market_export' => '',
-            'market_export_kilos' => '',
-        ],
-        'items' => [
-            'pond_breakdown' => ['nursery' => '', 'transition' => '', 'rearing' => ''],
-            'workers' => ['caretakers' => '', 'laborers' => ''],
-        ],
-        'stocking' => [
-            'bangus' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fry' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'fingerlings' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'sugpo' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'shrimp' => ['date' => '', 'source' => '', 'area' => '', 'quantity' => '', 'cost' => ''],
-            'custom_rows' => [],
-        ],
-        'harvesting' => [
-            'bangus' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'sugpo' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'shrimp' => ['date' => '', 'area' => '', 'qty_kilos' => '', 'pcs_per_kg' => '', 'price_per_kilo' => '', 'total_value' => ''],
-            'custom_rows' => [],
-        ],
-        'marketing' => [
-            'bangus' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'sugpo' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'shrimp' => ['local_qty' => '', 'local_val' => '', 'export_qty' => '', 'export_val' => ''],
-            'custom_rows' => [],
-        ],
-        'pond_types' => [
-            'nursery' => false,
-            'nursery_has' => '',
-            'transition' => false,
-            'transition_has' => '',
-            'rearing' => false,
-            'rearing_has' => '',
-            'canal' => false,
-            'canal_has' => '',
-            'others' => false,
-            'others_has' => '',
-        ],
-        'cases' => [
-            'admin_case' => 'No',
-            'admin_details' => '',
-            'judicial_case' => 'No',
-            'judicial_details' => '',
-        ],
-        'remarks' => '',
-        'officer_name' => '',
-        'designation' => '',
-        'signature_data' => '',
-        'site_photos' => [],
-    ];
-
     Flux::toast(variant: 'success', heading: 'Submitted', text: 'Annual Report saved successfully!');
     $this->modal('confirm-submit')->close();
-    // $this->step = 1;
     return redirect()->route('inspection.report');
 };
 

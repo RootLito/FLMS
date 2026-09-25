@@ -17,7 +17,7 @@ state([
         1 => ['letter' => 'i', 'title' => 'Initial Details'],
         2 => ['letter' => 'a', 'title' => 'Kind and Extent of Improvements'],
         3 => ['letter' => 'b', 'title' => 'Operation and Production'],
-        4 => ['letter' => 'c', 'title' => 'Verification of Presence '],
+        4 => ['letter' => 'c', 'title' => 'Verification of Presence'],
         5 => ['letter' => 'd', 'title' => 'Case status of the area'],
         6 => ['letter' => 'e', 'title' => 'Remarks and Recommendation/s'],
         7 => ['letter' => 'f', 'title' => 'Signature and Photo'],
@@ -43,36 +43,39 @@ mount(function ($reportId) {
 
     $this->formData = [
         'lessee_id' => $report->lessee_id ?? '',
-        'report_year_from' => $report->from ?? '',
-        'report_year_to' => $report->to ?? '',
         'fla_no' => $report->fla_no ?? '',
         'barangay' => $report->barangay ?? '',
         'municipality' => $report->municipality ?? '',
         'province' => $report->province ?? '',
         'date_issued' => $report->date_issued?->format('Y-m-d') ?? '',
         'date_expire' => $report->date_expire?->format('Y-m-d') ?? '',
+        'date_inspection' => $report->date_inspection?->format('Y-m-d') ?? '',
         'no_hec_granted' => $report->no_hec_granted ?? '',
         'no_hec_developed' => $report->no_hec_developed ?? '',
         'no_hect_undeveloped' => $report->no_hect_undeveloped ?? '',
 
-        'improvements' => is_object($report->improvements) ? $report->improvements->toArray() : $report->improvements ?? [],
-        'financial_values' => is_object($report->financial_values) ? $report->financial_values->toArray() : $report->financial_values ?? [],
-        'stocking_records' => is_object($report->stocking_records) ? $report->stocking_records->toArray() : $report->stocking_records ?? [],
-        'harvest_records' => is_object($report->harvest_records) ? $report->harvest_records->toArray() : $report->harvest_records ?? [],
-        'pond_types' => is_object($report->pond_types) ? $report->pond_types->toArray() : $report->pond_types ?? [],
+        // FIXED: Changed from 'improvements'/'financial_values' to match 'improvement' column
+        'improvement' => is_object($report->improvement) ? $report->improvement->toArray() : $report->improvement ?? [],
+        
+        'operation' => [
+            'pond_breakdown' => is_object($report->operation['pond_breakdown'] ?? null) ? $report->operation['pond_breakdown']->toArray() : ($report->operation['pond_breakdown'] ?? ['nursery' => '', 'transition' => '', 'rearing' => '']),
+            'workers' => is_object($report->operation['workers'] ?? null) ? $report->operation['workers']->toArray() : ($report->operation['workers'] ?? ['caretakers' => '', 'laborers' => '']),
+            'stocking_records' => is_object($report->operation['stocking_records'] ?? null) ? $report->operation['stocking_records']->toArray() : $report->operation['stocking_records'] ?? [],
+            'harvest_records' => is_object($report->operation['harvest_records'] ?? null) ? $report->operation['harvest_records']->toArray() : $report->operation['harvest_records'] ?? [],
+        ],
+        'verification' => [
+            'pond_types' => is_object($report->verification['pond_types'] ?? null) ? $report->verification['pond_types']->toArray() : $report->verification['pond_types'] ?? [],
+        ],
+        // FIXED: Match create form structure for case status
+        'case_status' => [
+            'admin_case' => $report->case_status['admin_case'] ?? ($report->with_pending_admin_case ?? false ? 'Yes' : 'No'),
+            'admin_details' => $report->case_status['admin_details'] ?? ($report->admin_case_details ?? ''),
+            'judicial_case' => $report->case_status['judicial_case'] ?? ($report->with_pending_judicial_case ?? false ? 'Yes' : 'No'),
+            'judicial_details' => $report->case_status['judicial_details'] ?? ($report->judicial_case_details ?? ''),
+        ],
 
-        'items' => is_object($report->items) ? $report->items->toArray() : $report->items ?? [],
-        'stocking' => is_object($report->stocking) ? $report->stocking->toArray() : $report->stocking ?? [],
-        'harvesting' => is_object($report->harvesting) ? $report->harvesting->toArray() : $report->harvesting ?? [],
-        'marketing' => is_object($report->marketing) ? $report->marketing->toArray() : $report->marketing ?? [],
-
-        'admin_case' => $report->with_pending_admin_case ? 'Yes' : 'No',
-        'admin_details' => $report->admin_case_details ?? '',
-        'judicial_case' => $report->with_pending_judicial_case ? 'Yes' : 'No',
-        'judicial_details' => $report->judicial_case_details ?? '',
-
-        'remarks' => $report->remarks_recommendation ?? '',
-        'officer_name' => $report->inspecting_officer ?? '',
+        'remarks' => $report->remarks ?? '',
+        'officer' => $report->officer ?? '',
         'designation' => $report->designation ?? '',
         'signature_data' => $signatureDataUrl ?? '',
         'site_photos' => [],
@@ -125,13 +128,15 @@ $previousStep = function () {
 $removeExistingPhoto = function ($index) {
     if (isset($this->existingPhotos[$index])) {
         Storage::disk('public')->delete($this->existingPhotos[$index]);
-        array_splice($this->existingPhotos, $index, 1);
+        unset($this->existingPhotos[$index]);
+        $this->existingPhotos = array_values($this->existingPhotos);
     }
 };
 
 $removePhoto = function ($index) {
     if (isset($this->formData['site_photos'][$index])) {
-        array_splice($this->formData['site_photos'], $index, 1);
+        unset($this->formData['site_photos'][$index]);
+        $this->formData['site_photos'] = array_values($this->formData['site_photos']);
     }
 };
 
@@ -147,42 +152,30 @@ $submit = function () {
         }
     }
 
+    // FIXED: Match exact column mapping used during creation
     $updatedData = [
         'lessee_id' => $this->formData['lessee_id'],
-        'from' => $this->formData['report_year_from'] ?: null,
-        'to' => $this->formData['report_year_to'] ?: null,
         'fla_no' => $this->formData['fla_no'],
         'barangay' => $this->formData['barangay'],
         'municipality' => $this->formData['municipality'],
         'province' => $this->formData['province'],
         'date_issued' => $this->formData['date_issued'] ?: null,
         'date_expire' => $this->formData['date_expire'] ?: null,
+        'date_inspection' => $this->formData['date_inspection'] ?: now(),
         'no_hec_granted' => $this->formData['no_hec_granted'] ?: null,
         'no_hec_developed' => $this->formData['no_hec_developed'] ?: null,
         'no_hect_undeveloped' => $this->formData['no_hect_undeveloped'] ?: null,
 
-        'improvements' => $this->formData['improvements'],
-        'financial_values' => $this->formData['financial_values'],
-        'stocking_records' => $this->formData['stocking_records'],
-        'harvest_records' => $this->formData['harvest_records'],
-        'pond_types' => $this->formData['pond_types'],
+        'improvement' => $this->formData['improvement'],
+        'operation' => $this->formData['operation'],
+        'verification' => $this->formData['verification'],
+        'case_status' => $this->formData['case_status'],
 
-        'items' => $this->formData['items'],
-        'stocking' => $this->formData['stocking'],
-        'harvesting' => $this->formData['harvesting'],
-        'marketing' => $this->formData['marketing'],
+        'remarks' => $this->formData['remarks'],
+        'officer' => $this->formData['officer'],
+        'designation' => $this->formData['designation'],
         'site_photos' => $savedPhotoPaths,
-
-        'with_pending_admin_case' => ($this->formData['admin_case'] ?? '') === 'Yes',
-        'admin_case_details' => $this->formData['admin_details'] ?? '',
-        'with_pending_judicial_case' => ($this->formData['judicial_case'] ?? '') === 'Yes',
-        'judicial_case_details' => $this->formData['judicial_details'] ?? '',
-
-        'remarks_recommendation' => $this->formData['remarks'] ?? '',
-        'inspecting_officer' => $this->formData['officer_name'] ?? '',
-        'designation' => $this->formData['designation'] ?? '',
     ];
-
 
     $report->update($updatedData);
 
@@ -209,22 +202,6 @@ $submit = function () {
 
     return redirect()->route('inspection.report');
 };
-
-$removeExistingPhoto = function ($index) {
-    if (isset($this->existingPhotos[$index])) {
-        Storage::disk('public')->delete($this->existingPhotos[$index]);
-        unset($this->existingPhotos[$index]);
-        $this->existingPhotos = array_values($this->existingPhotos);
-    }
-};
-
-$removePhoto = function ($index) {
-    if (isset($this->formData['site_photos'][$index])) {
-        unset($this->formData['site_photos'][$index]);
-        $this->formData['site_photos'] = array_values($this->formData['site_photos']);
-    }
-};
-
 ?>
 <flux:card class="w-full h-full flex flex-col !p-0 overflow-hidden">
     <div class="p-6 border-b border-gray-200 bg-gray-50/50 dark:bg-zinc-800/50">

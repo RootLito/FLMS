@@ -241,7 +241,7 @@ new class extends Component {
                     </flux:table.cell>
 
                     <flux:table.cell>
-                        <span class="text-xs text-zinc-500 line-clamp-1">{{ $report->remarks ?? 'No remarks' }}</span>
+                        <span class="text-zinc-500 line-clamp-1">{{ $report->remarks ?? 'No remarks' }}</span>
                     </flux:table.cell>
 
                     {{-- <flux:table.cell>

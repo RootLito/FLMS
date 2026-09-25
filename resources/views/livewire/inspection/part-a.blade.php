@@ -13,21 +13,21 @@
     <div class="grid grid-cols-12 gap-3 items-start mb-4">
         <div class="col-span-6 space-y-2">
             <flux:input placeholder="Area Cleared (has.)" size="sm"
-                wire:model="formData.improvements.clearings_area" />
+                wire:model="formData.improvement.clearings_area" />
             <flux:input placeholder="Main dike (lineal meters)" size="sm"
-                wire:model="formData.improvements.main_dike_meters" />
+                wire:model="formData.improvement.main_dike_meters" />
             <flux:input placeholder="Secondary dike (lineal meters)" size="sm"
-                wire:model="formData.improvements.secondary_dike_meters" />
+                wire:model="formData.improvement.secondary_dike_meters" />
         </div>
         <div class="col-span-3 space-y-2">
-            <flux:input type="date" size="sm" wire:model="formData.improvements.clearings_date" />
-            <flux:input type="date" size="sm" wire:model="formData.improvements.main_dike_date" />
-            <flux:input type="date" size="sm" wire:model="formData.improvements.secondary_dike_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.clearings_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.main_dike_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.secondary_dike_date" />
         </div>
         <div class="col-span-3 space-y-2">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.clearings_cost" />
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.main_dike_cost" />
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.secondary_dike_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.clearings_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.main_dike_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.secondary_dike_cost" />
         </div>
     </div>
 
@@ -35,13 +35,13 @@
     <div class="grid grid-cols-12 gap-3 items-start mb-4">
         <div class="col-span-6">
             <flux:input placeholder="(cubic meters)" size="sm"
-                wire:model="formData.improvements.excavation_cubic" />
+                wire:model="formData.improvement.excavation_cubic" />
         </div>
         <div class="col-span-3">
-            <flux:input type="date" size="sm" wire:model="formData.improvements.excavation_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.excavation_date" />
         </div>
         <div class="col-span-3">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.excavation_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.excavation_cost" />
         </div>
     </div>
 
@@ -49,42 +49,42 @@
     <div class="grid grid-cols-12 gap-3 items-start mb-4">
         <div class="col-span-6 space-y-2">
             <flux:input placeholder="Concrete (number)" size="sm"
-                wire:model="formData.improvements.gate_concrete" />
-            <flux:input placeholder="Wooden (number)" size="sm" wire:model="formData.improvements.gate_wooden" />
+                wire:model="formData.improvement.gate_concrete" />
+            <flux:input placeholder="Wooden (number)" size="sm" wire:model="formData.improvement.gate_wooden" />
         </div>
         <div class="col-span-3 space-y-2">
-            <flux:input type="date" size="sm" wire:model="formData.improvements.gate_concrete_date" />
-            <flux:input type="date" size="sm" wire:model="formData.improvements.gate_wooden_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.gate_concrete_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.gate_wooden_date" />
         </div>
         <div class="col-span-3 space-y-2">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.gate_concrete_cost" />
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.gate_wooden_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.gate_concrete_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.gate_wooden_cost" />
         </div>
     </div>
 
     <p class="text-sm font-medium text-zinc-700 mb-2">4. House, etc.</p>
     <div class="grid grid-cols-12 gap-3 items-start mb-4">
         <div class="col-span-6">
-            <flux:input size="sm" placeholder="Description" wire:model="formData.improvements.house_desc" />
+            <flux:input size="sm" placeholder="Description" wire:model="formData.improvement.house_desc" />
         </div>
         <div class="col-span-3">
-            <flux:input type="date" size="sm" wire:model="formData.improvements.house_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.house_date" />
         </div>
         <div class="col-span-3">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.house_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.house_cost" />
         </div>
     </div>
 
     <p class="text-sm font-medium text-zinc-700 mb-2">5. Equipment, etc.</p>
     <div class="grid grid-cols-12 gap-3 items-start mb-4">
         <div class="col-span-6">
-            <flux:input size="sm" placeholder="Description" wire:model="formData.improvements.equipment_desc" />
+            <flux:input size="sm" placeholder="Description" wire:model="formData.improvement.equipment_desc" />
         </div>
         <div class="col-span-3">
-            <flux:input type="date" size="sm" wire:model="formData.improvements.equipment_date" />
+            <flux:input type="date" size="sm" wire:model="formData.improvement.equipment_date" />
         </div>
         <div class="col-span-3">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvements.equipment_cost" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.equipment_cost" />
         </div>
     </div>
 
@@ -94,7 +94,7 @@
             <p class="text-sm text-zinc-700 font-black text-end">TOTAL VALUE</p>
         </div>
         <div class="col-span-3">
-            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.financial_values.total_value" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.total_value" />
         </div>
     </div>
 
@@ -104,8 +104,7 @@
             <p class="text-sm text-zinc-700 text-end">Actual Appraisal</p>
         </div>
         <div class="col-span-3">
-            <flux:input placeholder="₱ 0.00" size="sm"
-                wire:model="formData.financial_values.actual_appraisal" />
+            <flux:input placeholder="₱ 0.00" size="sm" wire:model="formData.improvement.actual_appraisal" />
         </div>
     </div>
     <div class="grid grid-cols-12 gap-3 items-start mb-4">
@@ -115,7 +114,7 @@
         </div>
         <div class="col-span-3">
             <flux:input placeholder="₱ 0.00" size="sm"
-                wire:model="formData.financial_values.under_tax_declaration" />
+                wire:model="formData.improvement.under_tax_declaration" />
         </div>
     </div>
 
@@ -124,7 +123,7 @@
             <p class="text-sm font-medium text-zinc-700">7. Permanent Personnel/Workers Employed</p>
         </div>
         <div class="col-span-6">
-            <flux:input size="sm" placeholder="(number)" wire:model="formData.improvements.permanent_workers" />
+            <flux:input size="sm" placeholder="(number)" wire:model="formData.improvement.permanent_workers" />
         </div>
     </div>
 
@@ -135,8 +134,8 @@
                     Attach Proof of SSS Contribution/Remittances (Required)
                 </p>
                 <flux:input type="file" size="sm" multiple accept="image/*"
-                    wire:model="formData.sss_proofs" />
-                <div wire:loading wire:target="formData.sss_proofs" class="text-xs text-zinc-500 mt-1">
+                    wire:model="formData.att_photos" />
+                <div wire:loading wire:target="formData.att_photos" class="text-xs text-zinc-500 mt-1">
                     Uploading previews...
                 </div>
             </div>
@@ -144,8 +143,8 @@
             <div class="col-span-6">
                 <p class="text-xs font-semibold text-zinc-500 mb-1 uppercase tracking-wider">Preview</p>
                 <div class="flex flex-wrap gap-3">
-                    @if (!empty($formData['sss_proofs']))
-                        @foreach ($formData['sss_proofs'] as $index => $file)
+                    @if (!empty($formData['att_photos']))
+                        @foreach ($formData['att_photos'] as $index => $file)
                             @php
                                 try {
                                     $url = $file->temporaryUrl();
@@ -161,7 +160,7 @@
                                         @click="showSlider = true; currentIndex = {{ $index }}" />
 
                                     <button type="button"
-                                        x-on:click="$wire.formData.sss_proofs.splice({{ $index }}, 1)"
+                                        x-on:click="$wire.formData.att_photos.splice({{ $index }}, 1)"
                                         class="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center shadow-md transition-colors focus:outline-none z-10">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="3" stroke="currentColor" class="w-2.5 h-2.5">
@@ -188,14 +187,14 @@
             </button>
 
             <button
-                @click="currentIndex = (currentIndex > 0) ? currentIndex - 1 : {{ count($formData['sss_proofs'] ?? []) }} - 1"
+                @click="currentIndex = (currentIndex > 0) ? currentIndex - 1 : {{ count($formData['att_photos'] ?? []) }} - 1"
                 class="absolute left-6 text-white p-3 hover:bg-white/10 rounded-full transition-colors">
                 <flux:icon.chevron-left class="w-8 h-8" />
             </button>
 
             <div class="max-w-5xl max-h-[85vh] flex flex-col items-center">
-                @if (!empty($formData['sss_proofs']))
-                    @foreach ($formData['sss_proofs'] as $index => $file)
+                @if (!empty($formData['att_photos']))
+                    @foreach ($formData['att_photos'] as $index => $file)
                         @php
                             try {
                                 $url = $file->temporaryUrl();
@@ -212,12 +211,12 @@
                 @endif
                 <p class="text-white mt-6 bg-zinc-800 px-3 py-1 rounded-full text-xs font-mono">
                     IMAGE <span x-text="currentIndex + 1"></span> /
-                    <span>{{ count($formData['sss_proofs'] ?? []) }}</span>
+                    <span>{{ count($formData['att_photos'] ?? []) }}</span>
                 </p>
             </div>
 
             <button
-                @click="currentIndex = (currentIndex < {{ count($formData['sss_proofs'] ?? []) }} - 1) ? currentIndex + 1 : 0"
+                @click="currentIndex = (currentIndex < {{ count($formData['att_photos'] ?? []) }} - 1) ? currentIndex + 1 : 0"
                 class="absolute right-6 text-white p-3 hover:bg-white/10 rounded-full transition-colors">
                 <flux:icon.chevron-right class="w-8 h-8" />
             </button>
@@ -230,7 +229,7 @@
         </div>
         <div class="col-span-6">
             <flux:input size="sm" placeholder="(number)"
-                wire:model="formData.improvements.non_permanent_workers" />
+                wire:model="formData.improvement.non_permanent_workers" />
         </div>
     </div>
 
@@ -239,7 +238,7 @@
             <p class="text-sm font-medium text-zinc-700">9. No. of Personnel/Workers Registered in (FishR): </p>
         </div>
         <div class="col-span-6">
-            <flux:input size="sm" placeholder="(number)" wire:model="formData.improvements.fishr_registered" />
+            <flux:input size="sm" placeholder="(number)" wire:model="formData.improvement.fishr_registered" />
         </div>
     </div>
 </div>
