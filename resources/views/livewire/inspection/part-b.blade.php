@@ -32,7 +32,7 @@
         </div>
     @endforeach
 
-    <div class="grid grid-cols-2 gap-x-3 gap-y-2 mb-4">
+    <div class="grid grid-cols-4 gap-x-3 gap-y-2 mb-4">
         <div>
             <flux:label class="mb-1">Date of Stocking:</flux:label>
             <flux:input type="date" size="sm" wire:model="formData.operation.harvest_records.date_stocking" />
@@ -57,7 +57,7 @@
         <p class="text-sm text-zinc-700 mb-2 font-bold">Markets</p>
         <flux:separator />
     </div>
-    <div class="grid grid-cols-2 gap-x-3 gap-y-2 mb-4">
+    <div class="grid grid-cols-4 gap-x-3 gap-y-2 mb-4">
         <div>
             <flux:label class="mb-1">Domestic:</flux:label>
             <flux:input size="sm" wire:model="formData.operation.harvest_records.market_domestic" />

@@ -19,7 +19,6 @@
                     <p class="text-sm font-medium text-zinc-700">Preview</p>
                     <div class="flex flex-wrap gap-3 mt-2 p-3 border border-zinc-200 rounded-lg min-h-[90px] bg-white">
 
-                        {{-- 1. EXISTING PHOTOS FROM DATABASE --}}
                         @if (!empty($existingPhotos))
                             @foreach ($existingPhotos as $index => $photoPath)
                                 <div class="relative group">
@@ -27,7 +26,6 @@
                                         class="h-16 w-16 object-cover rounded border border-zinc-300 cursor-pointer hover:ring-2 hover:ring-zinc-400 transition-all"
                                         @click="showSlider = true; currentIndex = {{ $index }}" />
 
-                                    {{-- Remove Button for Existing Photo --}}
                                     <button type="button" wire:click="removeExistingPhoto({{ $index }})"
                                         class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-md hover:bg-red-700 focus:outline-none w-5 h-5 flex items-center justify-center text-xs">
                                         &times;
@@ -36,25 +34,28 @@
                             @endforeach
                         @endif
 
-                        {{-- 2. NEWLY UPLOADED TEMPORARY PHOTOS --}}
                         @if (!empty($formData['site_photos']))
                             @foreach ($formData['site_photos'] as $newIndex => $file)
                                 @php
+                                    $url = null;
                                     try {
-                                        $url = $file->temporaryUrl();
+                                        if (is_object($file) && method_exists($file, 'temporaryUrl')) {
+                                            $url = $file->temporaryUrl();
+                                        }
                                     } catch (\Exception $e) {
                                         $url = null;
                                     }
+
                                     $totalExisting = count($existingPhotos ?? []);
                                     $currentIndexComputed = $totalExisting + $newIndex;
                                 @endphp
+
                                 @if ($url)
                                     <div class="relative group">
                                         <img src="{{ $url }}"
                                             class="h-16 w-16 object-cover rounded border border-zinc-300 cursor-pointer hover:ring-2 hover:ring-zinc-400 transition-all"
                                             @click="showSlider = true; currentIndex = {{ $currentIndexComputed }}" />
 
-                                        {{-- Remove Button for New Photo --}}
                                         <button type="button" wire:click="removePhoto({{ $newIndex }})"
                                             class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 shadow-md hover:bg-red-700 focus:outline-none w-5 h-5 flex items-center justify-center text-xs">
                                             &times;
@@ -64,7 +65,6 @@
                             @endforeach
                         @endif
 
-                        {{-- EMPTY STATE --}}
                         @if (empty($existingPhotos) && empty($formData['site_photos']))
                             <div class="flex items-center justify-center w-full h-16">
                                 <span class="text-xs text-zinc-400 italic">No files selected</span>

@@ -54,7 +54,6 @@ mount(function ($reportId) {
         'no_hec_developed' => $report->no_hec_developed ?? '',
         'no_hect_undeveloped' => $report->no_hect_undeveloped ?? '',
 
-        // FIXED: Changed from 'improvements'/'financial_values' to match 'improvement' column
         'improvement' => is_object($report->improvement) ? $report->improvement->toArray() : $report->improvement ?? [],
         
         'operation' => [
@@ -66,7 +65,6 @@ mount(function ($reportId) {
         'verification' => [
             'pond_types' => is_object($report->verification['pond_types'] ?? null) ? $report->verification['pond_types']->toArray() : $report->verification['pond_types'] ?? [],
         ],
-        // FIXED: Match create form structure for case status
         'case_status' => [
             'admin_case' => $report->case_status['admin_case'] ?? ($report->with_pending_admin_case ?? false ? 'Yes' : 'No'),
             'admin_details' => $report->case_status['admin_details'] ?? ($report->admin_case_details ?? ''),
