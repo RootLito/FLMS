@@ -155,8 +155,8 @@ new class extends Component {
                         </div>
                     </flux:table.cell> --}}
                     <flux:table.cell class="text-right flex items-center gap-1 justify-end">
-                        <flux:button icon="eye" icon:variant="outline" size="sm" variant="filled"
-                            tooltip="View" />
+                        <flux:button :href="route('annual.pdf', $report->id)" target="_blank" icon="eye"
+                            icon:variant="outline" size="sm" variant="filled" tooltip="View" />
                         <flux:button :href="route('annual.edit', ['report' => $report->id])" icon="pencil-square"
                             size="sm" variant="filled" icon:variant="outline" tooltip="Update" />
                         <flux:button wire:click="confirmDelete('{{ $report->id }}')" icon="trash"

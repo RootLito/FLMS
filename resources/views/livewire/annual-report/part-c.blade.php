@@ -13,7 +13,7 @@
             </div>
 
             <div>
-                <p class="text-sm font-medium text-zinc-700">Representative Site Photo/s</p>
+                <p class="text-sm font-medium text-zinc-700">Sketch of the Area</p>
                 <div class="mt-2 p-4 border-dashed border-zinc-200 bg-zinc-50 shadow-sm rounded">
                     <flux:input type="file" multiple accept="image/*" wire:model="formData.site_photos" />
                     <div wire:loading wire:target="formData.site_photos" class="text-xs text-zinc-500 mt-1">

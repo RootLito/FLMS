@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TestPaymentController;
 use App\Http\Controllers\InspectionReportPdfController;
+use App\Http\Controllers\AnnualReportPdfController;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -42,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{report}/edit', function (App\Models\AnnualReport $report) {
             return view('admin.annual-edit', ['reportId' => $report->id]);
         })->name('edit');
+        Route::get('/{id}/pdf', [AnnualReportPdfController::class, 'download'])
+            ->name('pdf');
     });
 
     // Settings
