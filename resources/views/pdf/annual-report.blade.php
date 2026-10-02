@@ -59,7 +59,6 @@
         .underline {
             border-bottom: 1px solid #000;
             display: inline-block;
-            text-align: center;
         }
 
         .indent {
@@ -73,7 +72,6 @@
 
         .table-form td,
         .table-form th {
-            padding: 2px 3px;
             font-size: 9pt;
         }
 
@@ -101,10 +99,10 @@
 <body>
 
     <!-- PAGE 1 -->
-    <div class="text-center font-bold" style="font-size: 11pt; margin-bottom: 4px;">
+    <div class="text-center font-bold" style="font-size: 11pt;">
         ANNUAL REPORT ON FISHPOND DEVELOPMENT, OPERATION & PRODUCTION
     </div>
-    <div class="text-center font-bold" style="font-size: 10pt; margin-bottom: 15px;">
+    <div class="text-center font-bold" style="font-size: 10pt; margin-bottom: 48px;">
         FROM <span class="underline" style="width: 180px;">{{ $report->from?->format('F d, Y') }}</span> TO <span
             class="underline" style="width: 180px;">{{ $report->to?->format('F d, Y') }}</span>
     </div>
@@ -123,14 +121,14 @@
         <p class="indent" style="margin-top: 4px;">
             I have the honor to submit herewith the annual report on the extent of development, operation and production
             of the fishpond area leased under
-            FLA. No. <span class="underline" style="width: 200px;">{{ $report->fla_no }}</span>
+            FLA. No. <span class="underline" style="width: 300px;">{{ $report->fla_no }}</span>
             located at <span class="underline"
-                style="width: 380px;">{{ ucwords(strtolower(implode(', ', array_filter([$report->barangay ?? '', $report->municipality ?? '', $report->province ?? ''])))) }}</span>.
+                style="width: 400px;">{{ ucwords(strtolower(implode(', ', array_filter([$report->barangay ?? '', $report->municipality ?? '', $report->province ?? ''])))) }}</span>.
         </p>
     </div>
 
     <!-- META DETAILS GRID -->
-    <table style="width: 100%; margin-bottom: 10px; font-size: 9.5pt;">
+    <table style="width: 100%; margin-bottom: 16px; font-size: 9.5pt;">
         <tr>
             <td style="width: 50%; vertical-align: top;">
                 Date Issued: <span class="underline"
@@ -143,11 +141,11 @@
                 Area Developed: <span class="underline" style="width: 195px;">{{ $report->no_hec_developed }}</span>
                 (has.)<br>
                 &nbsp;&nbsp;a. Nursery: <span class="underline"
-                    style="width: 180px;">{{ $report->area_nursery ?? '' }}</span> (has.)<br>
+                    style="width: 180px;">{{ $pondBreakdown['nursery'] ?? '' }}</span> (has.)<br>
                 &nbsp;&nbsp;b. Transition: <span class="underline"
-                    style="width: 168px;">{{ $report->area_transition ?? '' }}</span> (has.)<br>
+                    style="width: 168px;">{{ $pondBreakdown['transition'] ?? '' }}</span> (has.)<br>
                 &nbsp;&nbsp;c. Rearing: <span class="underline"
-                    style="width: 183px;">{{ $report->area_rearing ?? '' }}</span> (has.)<br>
+                    style="width: 183px;">{{ $pondBreakdown['rearing'] ?? '' }}</span> (has.)<br>
                 Area Undeveloped: <span class="underline"
                     style="width: 180px;">{{ $report->no_hect_undeveloped }}</span> (has.)
             </td>
@@ -155,280 +153,482 @@
     </table>
 
     <!-- SECTION A -->
-    <div class="section-header">A. KIND AND EXTENT OF IMPROVEMENTS</div>
+    <div class="section-header" style="margin-bottom: 16px;"><u>A. KIND AND EXTENT OF IMPROVEMENTS</u></div>
 
-    <table class="table-form" style="margin-bottom: 10px;">
+    <table class="table-form" style="margin-bottom: 32px; width: 100%;">
         <thead>
             <tr class="font-bold">
                 <th style="text-align: left; width: 45%;">ITEM</th>
-                <th style="text-align: center; width: 30%;">DATE INTRODUCED</th>
-                <th style="text-align: right; width: 25%;">VALUE/COST</th>
+                <th style="text-align: center; width: 28%;">DATE INTRODUCED</th>
+                <th style="width: 15px;"></th>
+                <th style="text-align: center; width: 27%;">VALUE/COST</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $items = is_array($report->items) ? $report->items : [];
-                $itemDict = collect($items)->keyBy('name');
-            @endphp
             <tr>
-                <td>1. Clearings: Area Cleared: <span class="underline"
-                        style="width: 120px;">{{ $itemDict['Clearings']['extent'] ?? '' }}</span> (has.)</td>
-                <td class="text-center border-line">{{ $itemDict['Clearings']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Clearings']['cost']) && $itemDict['Clearings']['cost'] !== '' ? number_format((float) $itemDict['Clearings']['cost'], 2) : '' }}
+                <td>1. Clearings:</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="padding-left: 15px;">Main: <span class="underline"
+                        style="width: 180px;">{{ $improvements['clearings_area'] ?? '' }}</span> (has.)</td>
+                <td class="text-center border-line">{{ $improvements['clearings_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['clearings_cost']) && $improvements['clearings_cost'] !== '' ? number_format((float) $improvements['clearings_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td>2. Dikes:</td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
             <tr>
                 <td style="padding-left: 15px;">Main: <span class="underline"
-                        style="width: 180px;">{{ $itemDict['Dikes Main']['extent'] ?? '' }}</span> lineal meters</td>
-                <td class="text-center border-line">{{ $itemDict['Dikes Main']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Dikes Main']['cost']) && $itemDict['Dikes Main']['cost'] !== '' ? number_format((float) $itemDict['Dikes Main']['cost'], 2) : '' }}
+                        style="width: 180px;">{{ $improvements['dike_main'] ?? '' }}</span> lineal meters</td>
+                <td class="text-center border-line">{{ $improvements['dike_main_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['dike_main_cost']) && $improvements['dike_main_cost'] !== '' ? number_format((float) $improvements['dike_main_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td style="padding-left: 15px;">Secondary: <span class="underline"
-                        style="width: 155px;">{{ $itemDict['Dikes Secondary']['extent'] ?? '' }}</span> lineal meters
+                        style="width: 155px;">{{ $improvements['dike_secondary'] ?? '' }}</span> lineal meters
                 </td>
-                <td class="text-center border-line">{{ $itemDict['Dikes Secondary']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Dikes Secondary']['cost']) && $itemDict['Dikes Secondary']['cost'] !== '' ? number_format((float) $itemDict['Dikes Secondary']['cost'], 2) : '' }}
+                <td class="text-center border-line">{{ $improvements['dike_secondary_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['dike_secondary_cost']) && $improvements['dike_secondary_cost'] !== '' ? number_format((float) $improvements['dike_secondary_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td style="padding-left: 15px;">Excavation: <span class="underline"
-                        style="width: 150px;">{{ $itemDict['Excavation']['extent'] ?? '' }}</span> cubic meters</td>
-                <td class="text-center border-line">{{ $itemDict['Excavation']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Excavation']['cost']) && $itemDict['Excavation']['cost'] !== '' ? number_format((float) $itemDict['Excavation']['cost'], 2) : '' }}
+                        style="width: 150px;">{{ $improvements['excavation'] ?? '' }}</span> cubic meters</td>
+                <td class="text-center border-line">{{ $improvements['excavation_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['excavation_cost']) && $improvements['excavation_cost'] !== '' ? number_format((float) $improvements['excavation_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td>3. Gates:</td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
             <tr>
                 <td style="padding-left: 15px;">Concrete: <span class="underline"
-                        style="width: 200px;">{{ $itemDict['Concrete Gates']['extent'] ?? '' }}</span></td>
-                <td class="text-center border-line">{{ $itemDict['Concrete Gates']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Concrete Gates']['cost']) && $itemDict['Concrete Gates']['cost'] !== '' ? number_format((float) $itemDict['Concrete Gates']['cost'], 2) : '' }}
+                        style="width: 200px;">{{ $improvements['gate_concrete'] ?? '' }}</span></td>
+                <td class="text-center border-line">{{ $improvements['gate_concrete_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['gate_concrete_cost']) && $improvements['gate_concrete_cost'] !== '' ? number_format((float) $improvements['gate_concrete_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td style="padding-left: 15px;">Wooden: <span class="underline"
-                        style="width: 205px;">{{ $itemDict['Wooden Gates']['extent'] ?? '' }}</span></td>
-                <td class="text-center border-line">{{ $itemDict['Wooden Gates']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Wooden Gates']['cost']) && $itemDict['Wooden Gates']['cost'] !== '' ? number_format((float) $itemDict['Wooden Gates']['cost'], 2) : '' }}
+                        style="width: 205px;">{{ $improvements['gate_wooden'] ?? '' }}</span></td>
+                <td class="text-center border-line">{{ $improvements['gate_wooden_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['gate_wooden_cost']) && $improvements['gate_wooden_cost'] !== '' ? number_format((float) $improvements['gate_wooden_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td>House/Building, etc. <span class="underline"
-                        style="width: 180px;">{{ $itemDict['House/Building']['extent'] ?? '' }}</span></td>
-                <td class="text-center border-line">{{ $itemDict['House/Building']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['House/Building']['cost']) && $itemDict['House/Building']['cost'] !== '' ? number_format((float) $itemDict['House/Building']['cost'], 2) : '' }}
+                        style="width: 180px;">{{ $improvements['building_desc'] ?? '' }}</span></td>
+                <td class="text-center border-line">{{ $improvements['building_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['building_cost']) && $improvements['building_cost'] !== '' ? number_format((float) $improvements['building_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr>
                 <td>Equipment/Tools/Banca, etc. <span class="underline"
-                        style="width: 140px;">{{ $itemDict['Equipment/Tools/Banca']['extent'] ?? '' }}</span></td>
-                <td class="text-center border-line">{{ $itemDict['Equipment/Tools/Banca']['date'] ?? '' }}</td>
-                <td class="text-right border-line">
-                    {{ isset($itemDict['Equipment/Tools/Banca']['cost']) && $itemDict['Equipment/Tools/Banca']['cost'] !== '' ? number_format((float) $itemDict['Equipment/Tools/Banca']['cost'], 2) : '' }}
+                        style="width: 140px;">{{ $improvements['equipment_desc'] ?? '' }}</span></td>
+                <td class="text-center border-line">{{ $improvements['equipment_date'] ?? '' }}</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ isset($improvements['equipment_cost']) && $improvements['equipment_cost'] !== '' ? number_format((float) $improvements['equipment_cost'], 2) : '' }}
                 </td>
             </tr>
             <tr class="font-bold">
-                <td class="text-right" colspan="2">TOTAL&nbsp;&nbsp;&nbsp;&nbsp;Php</td>
-                <td class="text-right border-line">
-                    {{ number_format((float) ($report->total_improvements_cost ?? 0), 2) }}</td>
+                <td class="text-right" colspan="2">TOTAL Php</td>
+                <td></td>
+                <td class="text-center border-line">
+                    {{ number_format((float) ($financial['total_value'] ?? 0), 2) }}</td>
             </tr>
             <tr>
-                <td colspan="3">4. Assessed Value:</td>
+                <td colspan="4">4. Assessed Value:</td>
             </tr>
             <tr>
-                <td style="padding-left: 15px;" colspan="2">Actual Appraisal
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Php
+                <td style="padding-left: 15px;" colspan="3">Actual Appraisal &nbsp;- - - - - - - - - - - - - - - - -
+                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Php
                 </td>
-                <td class="text-right border-line">{{ number_format((float) ($report->actual_appraisal ?? 0), 2) }}</td>
-            </tr>
-            <tr>
-                <td style="padding-left: 15px;" colspan="2">Under Tax Declaration:
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Php
-                </td>
-                <td class="text-right border-line">{{ number_format((float) ($report->tax_declaration_value ?? 0), 2) }}
+                <td class="text-center border-line">
+                    {{ number_format((float) ($financial['actual_appraisal'] ?? 0), 2) }}
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td style="padding-left: 15px;" colspan="3">Under Tax Declaration: &nbsp; - - - - - - - - - - - - - -
+                    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - Php
+                </td>
+                <td class="text-center border-line">
+                    {{ number_format((float) ($financial['tax_declaration'] ?? 0), 2) }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
                     5. Number of Workers Employed:<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;a. Caretaker/s <span class="underline"
-                        style="width: 200px;">{{ $report->caretakers_count ?? '' }}</span>
+                        style="width: 200px;  ">{{ $workers['caretakers'] ?? '' }}</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;b. Laborer/s <span class="underline"
-                        style="width: 200px;">{{ $report->laborers_count ?? '' }}</span>
+                        style="width: 200px;">{{ $workers['laborers'] ?? '' }}</span>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <!-- SECTION B -->
-    <div class="section-header">B. PRODUCTION AND MARKETING OPERATION</div>
-    <div class="sub-header">1. STOCKING:</div>
+    <div class="section-header"><u>B. PRODUCTION AND MARKETING OPERATION</u></div>
+    <div class="sub-header" style="margin: 18px 0;">1. STOCKING:</div>
 
-    <table class="table-form" style="margin-bottom: 10px;">
+    <table class="table-form" style="margin-bottom: 10px; width: 100%;">
         <thead>
             <tr class="font-bold">
-                <th style="text-align: left; width: 18%;">Species</th>
-                <th style="text-align: center; width: 16%;">Date Stocked</th>
-                <th style="text-align: center; width: 20%;">Source/Place</th>
-                <th style="text-align: center; width: 16%;">Area Stocked (Has.)</th>
-                <th style="text-align: center; width: 15%;">Quantity (No.)</th>
-                <th style="text-align: right; width: 15%;">Cost (Php)</th>
+                <th style="text-align: left; width: 14%; padding-top: 10px;">Species</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 12%; padding-top: 10px;">Date Stocked</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 22%; padding-top: 10px;">Source/Place</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 16%; padding-top: 10px;">Area Stocked (Has.)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 15%; padding-top: 10px;">Quantity (No.)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 21%; padding-top: 10px;">Cost (Php)</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $stockings = is_array($report->stocking) ? $report->stocking : [];
-                $stockDict = collect($stockings)->keyBy('species');
-                $standardSpecies = ['Bangus', 'Fry', 'Fingerlings', 'Sugpo', 'Shrimp', 'Others (Specify)'];
-                $totalStockCost = 0;
-            @endphp
-            @foreach ($standardSpecies as $spec)
-                @php
-                    $item = $stockDict->get($spec, []);
-                    $cost = isset($item['cost']) && $item['cost'] !== '' ? (float) $item['cost'] : 0;
-                    $totalStockCost += $cost;
-                @endphp
+            @foreach ($stocking as $spec => $item)
                 <tr>
-                    <td class="font-bold">{{ $spec }}</td>
-                    <td class="text-center border-line">{{ $item['date_stocked'] ?? '' }}</td>
-                    <td class="text-center border-line">{{ $item['source'] ?? '' }}</td>
-                    <td class="text-center border-line">{{ $item['area_stocked'] ?? '' }}</td>
-                    <td class="text-center border-line">{{ $item['quantity'] ?? '' }}</td>
-                    <td class="text-right border-line">{{ $cost > 0 ? number_format($cost, 2) : '' }}</td>
+                    <td style="padding-top: 10px;">{{ $spec }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['date'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['source'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['area'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['quantity'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ $item['cost'] > 0 ? number_format($item['cost'], 2) : '' }}
+                    </td>
                 </tr>
             @endforeach
+
+            @foreach ($customRows as $custom)
+                <tr>
+                    <td style="padding-top: 10px;">{{ $custom['label'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['date'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['source'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['area'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['quantity'] ?? '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ isset($custom['cost']) && $custom['cost'] > 0 ? number_format((float) $custom['cost'], 2) : '' }}
+                    </td>
+                </tr>
+            @endforeach
+
+            @for ($i = count($customRows); $i < 3; $i++)
+                <tr>
+                    <td style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                </tr>
+            @endfor
+
             <tr class="font-bold">
-                <td colspan="5">TOTAL</td>
-                <td class="text-right border-line">{{ number_format($totalStockCost, 2) }}</td>
+                <td style="padding-top: 10px;">TOTAL</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="text-center border-line" style="padding-top: 10px;">
+                    {{ number_format($totalStockCost, 2) }}
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <!-- PAGE 2 -->
     <div class="page-break"></div>
 
-    <div class="sub-header">2. HARVESTING:</div>
-    <table class="table-form" style="margin-bottom: 15px;">
+    <div class="sub-header" style="margin: 18px 0;">2. HARVESTING:</div>
+    <!-- HARVESTING TABLE -->
+    <table class="table-form" style="margin-bottom: 24px; width: 100%;">
         <thead>
             <tr class="font-bold">
-                <th style="text-align: left; width: 18%;">Species</th>
-                <th style="text-align: center; width: 15%;">Date Harvested</th>
-                <th style="text-align: center; width: 15%;">Area Harvested</th>
-                <th style="text-align: center; width: 14%;">Quantity (Kilos)</th>
-                <th style="text-align: center; width: 12%;">No. of Pcs./Kg.</th>
-                <th style="text-align: center; width: 13%;">Price/Kilo</th>
-                <th style="text-align: right; width: 13%;">Total Value</th>
+                <th style="text-align: left; width: 18%; padding-top: 10px;">Species</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 12%; padding-top: 10px;">Date Harvested</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 15%; padding-top: 10px;">Area Harvested</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 14%; padding-top: 10px;">Quantity (Kilos)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 12%; padding-top: 10px;">No. of Pcs./Kg.</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 10%; padding-top: 10px;">Price/Kilo</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 16%; padding-top: 10px;">Total Value</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $harvestings = is_array($report->harvesting) ? $report->harvesting : [];
-                $harvestDict = collect($harvestings)->keyBy('species');
-                $harvestSpecies = ['Bangus', 'Sugpo', 'Shrimp', 'Others (Specify)'];
-                $totalHarvestValue = 0;
-            @endphp
-            @foreach ($harvestSpecies as $spec)
-                @php
-                    $item = $harvestDict->get($spec, []);
-                    $val = isset($item['sales']) && $item['sales'] !== '' ? (float) $item['sales'] : 0;
-                    $totalHarvestValue += $val;
-                @endphp
+            @foreach ($harvestData as $spec => $item)
                 <tr>
-                    <td class="font-bold">{{ $spec }}</td>
-                    <td class="text-center border-line">{{ $item['date'] ?? '' }}</td>
-                    <td class="text-center border-line">{{ $item['area_harvested'] ?? '' }}</td>
-                    <td class="text-center border-line">{{ $item['kilos'] ?? '' }}</td>
-                    <td class="text-center border-line">{{ $item['pcs_per_kg'] ?? '' }}</td>
-                    <td class="text-center border-line">
-                        {{ isset($item['price_per_kilo']) && $item['price_per_kilo'] !== '' ? number_format((float) $item['price_per_kilo'], 2) : '' }}
+                    <td style="padding-top: 10px;">{{ $spec }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['date'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['area_harvested'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['kilos'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['pcs_per_kg'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ !is_null($item['price_per_kilo']) ? number_format($item['price_per_kilo'], 2) : '' }}
                     </td>
-                    <td class="text-right border-line">{{ $val > 0 ? number_format($val, 2) : '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ $item['total_value'] > 0 ? number_format($item['total_value'], 2) : '' }}
+                    </td>
                 </tr>
             @endforeach
+
+            {{-- Custom Harvest Rows --}}
+            @foreach ($customHarvestRows as $custom)
+                @php
+                    $val =
+                        isset($custom['total_value']) && $custom['total_value'] !== ''
+                            ? (float) $custom['total_value']
+                            : 0;
+                    $price =
+                        isset($custom['price_per_kilo']) && $custom['price_per_kilo'] !== ''
+                            ? (float) $custom['price_per_kilo']
+                            : null;
+                @endphp
+                <tr>
+                    <td style="padding-top: 10px;">{{ $custom['label'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['date'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['area'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['qty_kilos'] ?? '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['pcs_per_kg'] ?? '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ !is_null($price) ? number_format($price, 2) : '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ $val > 0 ? number_format($val, 2) : '' }}
+                    </td>
+                </tr>
+            @endforeach
+
+            @for ($i = count($customHarvestRows); $i < 3; $i++)
+                <tr>
+                    <td style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                </tr>
+            @endfor
+
             <tr class="font-bold">
-                <td colspan="6">TOTAL</td>
-                <td class="text-right border-line">{{ number_format($totalHarvestValue, 2) }}</td>
+                <td style="padding-top: 10px;">TOTAL</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="text-center border-line" style="padding-top: 10px;">
+                    {{ number_format($totalHarvestValue, 2) }}
+                </td>
             </tr>
         </tbody>
     </table>
 
-    <div class="sub-header">3. MARKETING:</div>
-    <table class="table-form" style="margin-bottom: 15px;">
+    <div class="sub-header" style="margin: 18px 0;">3. MARKETING:</div>
+
+    <!-- MARKETING TABLE -->
+    <table class="table-form" style="margin-bottom: 24px; width: 100%;">
         <thead>
             <tr class="font-bold">
-                <th rowspan="2" style="text-align: left; width: 20%; vertical-align: bottom;">Species</th>
-                <th colspan="2" style="text-align: center; width: 40%; border-bottom: 1px solid #000;">Local
-                    Consumption</th>
-                <th colspan="2" style="text-align: center; width: 40%; border-bottom: 1px solid #000;">Export</th>
+                <th rowspan="2" style="text-align: left; width: 20%; vertical-align: bottom; padding-top: 10px;">
+                    Species</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th colspan="3" style="text-align: center; border-bottom: 1px solid #000;">Local Consumption</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th colspan="3" style="text-align: center; border-bottom: 1px solid #000;">Export</th>
             </tr>
             <tr class="font-bold">
-                <th style="text-align: center; width: 20%;">Quantity (Kilos)</th>
-                <th style="text-align: center; width: 20%;">Value (Php)</th>
-                <th style="text-align: center; width: 20%;">Quantity (Kilos)</th>
-                <th style="text-align: center; width: 20%;">Value (Php)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 20%; padding-top: 10px;">Quantity (Kilos)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 20%; padding-top: 10px;">Value (Php)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 20%; padding-top: 10px;">Quantity (Kilos)</th>
+                <th style="width: 10px; padding-top: 10px;"></th>
+                <th style="text-align: center; width: 20%; padding-top: 10px;">Value (Php)</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $marketings = is_array($report->marketing) ? $report->marketing : [];
-                $marketDict = collect($marketings)->keyBy('species');
-                $marketSpecies = ['Bangus', 'Sugpo', 'Shrimp', 'Others'];
-            @endphp
-            @foreach ($marketSpecies as $spec)
-                @php
-                    $item = $marketDict->get($spec, []);
-                @endphp
+            @foreach ($marketingData as $spec => $item)
                 <tr>
-                    <td class="font-bold">{{ $spec }}</td>
-                    <td class="text-center border-line">{{ $item['local_kilos'] ?? '' }}</td>
-                    <td class="text-center border-line">
-                        {{ isset($item['local_value']) && $item['local_value'] !== '' ? number_format((float) $item['local_value'], 2) : '' }}
+                    <td style="padding-top: 10px;">{{ $spec }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['local_kilos'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ !is_null($item['local_value']) ? number_format($item['local_value'], 2) : '' }}
                     </td>
-                    <td class="text-center border-line">{{ $item['export_kilos'] ?? '' }}</td>
-                    <td class="text-center border-line">
-                        {{ isset($item['export_value']) && $item['export_value'] !== '' ? number_format((float) $item['export_value'], 2) : '' }}
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $item['export_kilos'] }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ !is_null($item['export_value']) ? number_format($item['export_value'], 2) : '' }}
                     </td>
                 </tr>
             @endforeach
+
+            {{-- Custom Marketing Rows --}}
+            @foreach ($customMarketingRows as $custom)
+                @php
+                    $localVal =
+                        isset($custom['local_val']) && $custom['local_val'] !== ''
+                            ? (float) $custom['local_val']
+                            : null;
+                    $exportVal =
+                        isset($custom['export_val']) && $custom['export_val'] !== ''
+                            ? (float) $custom['export_val']
+                            : null;
+                @endphp
+                <tr>
+                    <td style="padding-top: 10px;">{{ $custom['label'] ?? '' }}</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['local_qty'] ?? '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ !is_null($localVal) ? number_format($localVal, 2) : '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">{{ $custom['export_qty'] ?? '' }}
+                    </td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="text-center border-line" style="padding-top: 10px;">
+                        {{ !is_null($exportVal) ? number_format($exportVal, 2) : '' }}
+                    </td>
+                </tr>
+            @endforeach
+
+            @for ($i = count($customMarketingRows); $i < 3; $i++)
+                <tr>
+                    <td style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                    <td style="padding-top: 10px;"></td>
+                    <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                </tr>
+            @endfor
+
             <tr class="font-bold">
-                <td>TOTAL</td>
-                <td class="border-line"></td>
-                <td class="border-line"></td>
-                <td class="border-line"></td>
-                <td class="border-line"></td>
+                <td style="padding-top: 10px;">TOTAL</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
+                <td style="padding-top: 10px;"></td>
+                <td class="border-line" style="padding-top: 10px;">&nbsp;</td>
             </tr>
         </tbody>
     </table>
 
     <!-- STATUTORY NOTE -->
     <div style="font-size: 8.5pt; text-align: justify; margin-bottom: 12px; font-style: italic;">
-        <strong>Note: Section 23(e)</strong> - Within one (1) year and six (6) months from the approval of the FLA/ASC,
-        the area leased shall be developed and producing in commercial scale; provided, however, that within five (5)
+        <strong>Note: Section 23(e)</strong> - Within one (1) year and six (6) months from the approval of the
+        FLA/ASC,
+        the area leased shall be developed and producing in commercial scale; provided, however, that within five
+        (5)
         years from the approval of the FLA/ASC, the holder must have fully developed the area.
     </div>
 
     <!-- REMARKS -->
     <div class="font-bold" style="font-size: 9.5pt; margin-bottom: 4px;">REMARKS:</div>
-    <div style="min-height: 50px; text-align: justify; font-size: 9.5pt; margin-bottom: 15px;" class="border-line">
-        {{ $report->remarks ?? '' }}
+
+    <div style="
+            font-size: 9.5pt;
+            text-align: justify;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        ">
+        <span
+            style="
+                border-bottom: 1px solid #000;
+                display: inline;
+            ">
+            {{ $report->remarks ?? '' }}
+        </span>
     </div>
 
     <!-- SIGNATURE -->
@@ -477,7 +677,7 @@
     <div class="page-break"></div>
 
     <div class="text-center font-bold" style="font-size: 11pt; margin-top: 10px; margin-bottom: 25px;">
-        SKETCH OF THE AREA / RECENT SITE PHOTOS
+        SKETCH OF THE AREA
     </div>
 
     @php
@@ -492,7 +692,7 @@
                     @foreach ($photoRow as $photo)
                         <td style="width: 50%; text-align: center; padding: 10px; vertical-align: top;">
                             <img src="{{ public_path('storage/' . $photo) }}"
-                                style="max-width: 100%; max-height: 400px; margin: 0 auto; display: block; border: 1px solid #ddd; padding: 4px;">
+                                style="max-width: 100%; max-height: 400px; margin: 0 auto; display: block; ">
                         </td>
                     @endforeach
                     @if (count($photoRow) == 1)

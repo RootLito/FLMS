@@ -119,41 +119,11 @@ new class extends Component {
 
                     <flux:table.cell>
                         <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                            {{ $report->from }} - {{ $report->to }}
+                            {{ $report->from?->format('M d, Y') ?? 'N/A' }} -
+                            {{ $report->to?->format('M d, Y') ?? 'N/A' }}
                         </span>
                     </flux:table.cell>
 
-
-
-                    {{-- <flux:table.cell>
-                        <span class="text-sm text-zinc-700 dark:text-zinc-300">
-                            {{ $report->created_at?->format('M d, Y h:i:s A') }}
-                        </span>
-                    </flux:table.cell> --}}
-
-
-                    {{-- <flux:table.cell>
-                        <div class="flex items-center gap-2">
-                            <flux:dropdown>
-                                <flux:button icon="ellipsis-horizontal" size="sm" />
-
-                                <flux:menu>
-                                    <flux:menu.item icon="eye">View Submission</flux:menu.item>
-                                    <flux:menu.item icon="pencil-square"
-                                        :href="route('annual.edit', ['report' => $report->id])">
-                                        Edit Report
-                                    </flux:menu.item>
-
-
-                                    <flux:menu.separator />
-                                    <flux:menu.item icon="trash" variant="danger"
-                                        wire:click="confirmDelete('{{ $report->id }}')">
-                                        Delete Report
-                                    </flux:menu.item>
-                                </flux:menu>
-                            </flux:dropdown>
-                        </div>
-                    </flux:table.cell> --}}
                     <flux:table.cell class="text-right flex items-center gap-1 justify-end">
                         <flux:button :href="route('annual.pdf', $report->id)" target="_blank" icon="eye"
                             icon:variant="outline" size="sm" variant="filled" tooltip="View" />
