@@ -1,9 +1,12 @@
+@props(['formData', 'existingPhotos' => []])
+
 <div class="space-y-6" x-data="{ showSlider: false, currentIndex: 0 }">
     <h2 class="text-xl font-bold text-gray-800 mb-2">F. Documentation and Authentication</h2>
     <flux:separator class="my-6" />
 
     <div class="flex flex-col gap-y-8">
         <div class="w-full grid grid-cols-2 gap-8">
+            {{-- Site Photos Column --}}
             <div class="flex flex-col gap-y-4">
                 <div>
                     <p class="text-sm font-medium text-zinc-700">Representative Site Photo/s</p>
@@ -19,6 +22,7 @@
                     <p class="text-sm font-medium text-zinc-700">Preview</p>
                     <div class="flex flex-wrap gap-3 mt-2 p-3 border border-zinc-200 rounded-lg min-h-[90px] bg-white">
 
+                        {{-- Saved Database Photos --}}
                         @if (!empty($existingPhotos))
                             @foreach ($existingPhotos as $index => $photoPath)
                                 <div class="relative group">
@@ -34,6 +38,7 @@
                             @endforeach
                         @endif
 
+                        {{-- Newly Uploaded Temporary Photos --}}
                         @if (!empty($formData['site_photos']))
                             @foreach ($formData['site_photos'] as $newIndex => $file)
                                 @php
@@ -74,6 +79,7 @@
                 </div>
             </div>
 
+            {{-- Signature Column --}}
             <div class="flex flex-col gap-y-4">
                 <div>
                     <p class="text-sm font-medium text-zinc-700">Action Officer Signature</p>
@@ -92,7 +98,7 @@
                             this.ctx.lineWidth = 2.5;
                             this.ctx.lineCap = 'round';
                     
-                            let existingSig = @js($formData['documentation']['signature_data'] ?? '');
+                            let existingSig = @js($formData['documentation']['signature_data'] ?? ($formData['signature_data'] ?? ''));
                             if (existingSig) {
                                 const img = new Image();
                                 img.onload = () => this.ctx.drawImage(img, 0, 0);
@@ -107,7 +113,7 @@
                             this.ctx.lineWidth = 2.5;
                             this.ctx.lineCap = 'round';
                     
-                            let existingSig = @js($formData['documentation']['signature_data'] ?? '');
+                            let existingSig = @js($formData['documentation']['signature_data'] ?? ($formData['signature_data'] ?? ''));
                             if (existingSig) {
                                 const img = new Image();
                                 img.onload = () => this.ctx.drawImage(img, 0, 0);

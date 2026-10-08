@@ -27,14 +27,12 @@
                 <div
                     class="flex flex-wrap gap-3 mt-2 p-3 border border-zinc-200 rounded-lg min-h-[90px] bg-white shadow-sm">
 
-                    {{-- 1. EXISTING PHOTOS FROM DATABASE --}}
                     @if (!empty($existingPhotos))
                         @foreach ($existingPhotos as $index => $photoPath)
                             <div class="relative group h-16 w-16">
                                 <img src="{{ Storage::url($photoPath) }}"
                                     class="h-full w-full object-cover rounded border border-zinc-300 shadow-sm" />
 
-                                {{-- Remove Button for Existing Photo --}}
                                 <button type="button" wire:click="removeExistingPhoto({{ $index }})"
                                     class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-0.5 shadow hover:bg-red-700 transition-colors">
                                     <flux:icon.x-mark class="w-3 h-3" />
@@ -43,7 +41,6 @@
                         @endforeach
                     @endif
 
-                    {{-- 2. NEWLY UPLOADED TEMPORARY PHOTOS --}}
                     @if (!empty($formData['site_photos']))
                         @foreach ($formData['site_photos'] as $index => $file)
                             @php
@@ -59,7 +56,6 @@
                                     <img src="{{ $url }}"
                                         class="h-full w-full object-cover rounded border border-zinc-300 shadow-sm" />
 
-                                    {{-- Remove Button for New Photo --}}
                                     <button type="button" wire:click="removePhoto({{ $index }})"
                                         class="absolute -top-1 -right-1 bg-red-600 text-white rounded-full p-0.5 shadow hover:bg-red-700 transition-colors">
                                         <flux:icon.x-mark class="w-3 h-3" />
@@ -69,7 +65,6 @@
                         @endforeach
                     @endif
 
-                    {{-- EMPTY STATE --}}
                     @if (empty($existingPhotos) && empty($formData['site_photos']))
                         <div class="flex items-center justify-center w-full h-16">
                             <span class="text-xs text-zinc-400 italic">No files selected</span>

@@ -24,6 +24,7 @@ state([
     ],
     'formData' => [],
     'existingPhotos' => [],
+    'existingAttPhotos' => [],
 ]);
 
 mount(function ($reportId) {
@@ -48,6 +49,7 @@ mount(function ($reportId) {
         'municipality' => $report->municipality ?? '',
         'province' => $report->province ?? '',
         'date_issued' => $report->date_issued?->format('Y-m-d') ?? '',
+        
         'date_expire' => $report->date_expire?->format('Y-m-d') ?? '',
         'date_inspection' => $report->date_inspection?->format('Y-m-d') ?? '',
         'no_hec_granted' => $report->no_hec_granted ?? '',
@@ -77,9 +79,11 @@ mount(function ($reportId) {
         'designation' => $report->designation ?? '',
         'signature_data' => $signatureDataUrl ?? '',
         'site_photos' => [],
+        'att_photos' => [],
     ];
 
     $this->existingPhotos = is_object($report->site_photos) ? $report->site_photos->toArray() : $report->site_photos ?? [];
+    $this->existingAttPhotos = is_object($report->att_photos) ? $report->att_photos->toArray() : $report->att_photos ?? [];
 });
 
 $updatedFormDataLesseeId = function ($value) {
@@ -137,6 +141,23 @@ $removePhoto = function ($index) {
         $this->formData['site_photos'] = array_values($this->formData['site_photos']);
     }
 };
+
+
+$removeAttPhoto = function ($index) {
+    if (isset($this->formData['att_photos'][$index])) {
+        array_splice($this->formData['att_photos'], $index, 1);
+    }
+};
+
+$removeExistingAttPhoto = function ($index) {
+    if (isset($this->existingAttPhotos[$index])) {
+        array_splice($this->existingAttPhotos, $index, 1);
+    }
+};
+
+
+
+
 
 $submit = function () {
     $report = InspectionReport::findOrFail($this->reportId);
@@ -260,7 +281,7 @@ $submit = function () {
             </div>
         @elseif ($step === 2)
             <div wire:key="step-view-2">
-                <x-inspection.part-a :formData="$formData" />
+                <x-inspection.part-a :formData="$formData" :existingAttPhotos="$existingAttPhotos"/>
             </div>
         @elseif ($step === 3)
             <div wire:key="step-view-3">

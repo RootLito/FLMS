@@ -101,12 +101,18 @@ state([
             'judicial_details' => '',
         ],
         'remarks' => '',
-        'signature_data' => '',
+        'documentation' => [
+            'signature_data' => '',
+            'officer_name' => '',
+            'designation' => '',
+        ],
         'officer' => '',
         'designation' => '',
         'site_photos' => [],
         'att_photos' => [],
     ],
+    'existingSitePhotos' => [],
+    'existingAttPhotos' => [],
 ]);
 
 $updatedFormDataLesseeId = function ($value) {
@@ -150,20 +156,59 @@ $previousStep = function () {
     }
 };
 
+$removePhoto = function ($index) {
+    if (isset($this->formData['site_photos'][$index])) {
+        array_splice($this->formData['site_photos'], $index, 1);
+    }
+};
+
+$removeExistingPhoto = function ($index) {
+    if (isset($this->existingSitePhotos[$index])) {
+        array_splice($this->existingSitePhotos, $index, 1);
+    }
+};
+
+$removeAttPhoto = function ($index) {
+    if (isset($this->formData['att_photos'][$index])) {
+        array_splice($this->formData['att_photos'], $index, 1);
+    }
+};
+
+$removeExistingAttPhoto = function ($index) {
+    if (isset($this->existingAttPhotos[$index])) {
+        array_splice($this->existingAttPhotos, $index, 1);
+    }
+};
+
 $submit = function () {
     if (empty($this->formData['lessee_id'])) {
         Flux::toast(variant: 'warning', heading: 'Lessee Required.', text: 'Please select a Lessee on Step 1 before submitting the report.');
         return;
     }
 
-    $savedPhotoPaths = [];
+    // Save SSS Attachment Photos
+    $savedAttPhotoPaths = [];
     if (!empty($this->formData['att_photos'])) {
         foreach ($this->formData['att_photos'] as $photoFile) {
-            if (method_exists($photoFile, 'store')) {
-                $savedPhotoPaths[] = $photoFile->store('att_photos', 'public');
+            if (is_object($photoFile) && method_exists($photoFile, 'store')) {
+                $savedAttPhotoPaths[] = $photoFile->store('att_photos', 'public');
             }
         }
     }
+
+    // Save Site Photos
+    $savedSitePhotoPaths = $this->existingSitePhotos ?? [];
+    if (!empty($this->formData['site_photos'])) {
+        foreach ($this->formData['site_photos'] as $photoFile) {
+            if (is_object($photoFile) && method_exists($photoFile, 'store')) {
+                $savedSitePhotoPaths[] = $photoFile->store('site_photos', 'public');
+            }
+        }
+    }
+
+    // Extract officer & designation correctly
+    $officerName = $this->formData['documentation']['officer_name'] ?? ($this->formData['officer'] ?? '');
+    $officerDesignation = $this->formData['documentation']['designation'] ?? ($this->formData['designation'] ?? '');
 
     $report = InspectionReport::create([
         'lessee_id' => $this->formData['lessee_id'],
@@ -185,25 +230,31 @@ $submit = function () {
 
         'remarks' => $this->formData['remarks'],
 
-        'officer' => $this->officer,
-        'designation' => $this->designation,
-        'att_photos' => $savedPhotoPaths,
+        'officer' => $officerName,
+        'designation' => $officerDesignation,
+        'att_photos' => $savedAttPhotoPaths,
+        'site_photos' => $savedSitePhotoPaths,
     ]);
 
-    if (!empty($this->formData['signature_data'])) {
-        $base64Image = preg_replace('/^data:image\/\w+;base64,/', '', $this->formData['signature_data']);
+    // Handle Signature Upload
+    $signatureData = $this->formData['documentation']['signature_data'] ?? ($this->formData['signature_data'] ?? '');
+
+    if (!empty($signatureData)) {
+        $base64Image = preg_replace('/^data:image\/\w+;base64,/', '', $signatureData);
         $decodedImage = base64_decode($base64Image);
         $uuid = (string) Str::uuid();
         $filename = "{$uuid}.png";
 
-        Storage::disk(config('sign-pad.disk_name', 'local'))->put(config('sign-pad.signatures_path', 'signatures') . "/{$filename}", $decodedImage);
+        Storage::disk(config('sign-pad.disk_name', 'public'))->put(config('sign-pad.signatures_path', 'signatures') . "/{$filename}", $decodedImage);
 
-        $report->signature()->create([
-            'uuid' => $uuid,
-            'filename' => $filename,
-            'from_ips' => [request()->ip()],
-            'certified' => config('sign-pad.certify_documents', false),
-        ]);
+        if (method_exists($report, 'signature')) {
+            $report->signature()->create([
+                'uuid' => $uuid,
+                'filename' => $filename,
+                'from_ips' => [request()->ip()],
+                'certified' => config('sign-pad.certify_documents', false),
+            ]);
+        }
     }
 
     Flux::toast(variant: 'success', heading: 'Submitted', text: 'Annual Report saved successfully!');
@@ -212,6 +263,7 @@ $submit = function () {
 };
 
 ?>
+
 <flux:card class="w-full h-full flex flex-col !p-0 overflow-hidden">
     <div class="p-6 border-b border-gray-200 bg-gray-50/50 dark:bg-zinc-800/50">
         <nav aria-label="Progress">
@@ -291,7 +343,7 @@ $submit = function () {
             </div>
         @elseif ($step === 7)
             <div wire:key="step-view-7">
-                <x-inspection.part-f :formData="$formData" />
+                <x-inspection.part-f :formData="$formData" :existingPhotos="$existingSitePhotos" />
             </div>
         @endif
     </div>

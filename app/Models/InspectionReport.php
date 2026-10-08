@@ -49,8 +49,36 @@ class InspectionReport extends Model implements CanBeSigned
         'site_photos' => 'array',
     ];
 
+    /**
+     * Relationship with Lessee
+     */
     public function lessee(): BelongsTo
     {
         return $this->belongsTo(Lessee::class);
+    }
+
+    /**
+     * Required by LaravelSignPad to specify where to position/render
+     * the signature on documents or PDFs if needed.
+     */
+    public function getSignatureFileName(): string
+    {
+        return "inspection_report_{$this->id}_signature.png";
+    }
+
+    /**
+     * Safely fallback site_photos to an empty array when null.
+     */
+    public function getSitePhotosAttribute($value): array
+    {
+        return is_string($value) ? json_decode($value, true) : ($value ?? []);
+    }
+
+    /**
+     * Safely fallback att_photos to an empty array when null.
+     */
+    public function getAttPhotosAttribute($value): array
+    {
+        return is_string($value) ? json_decode($value, true) : ($value ?? []);
     }
 }
